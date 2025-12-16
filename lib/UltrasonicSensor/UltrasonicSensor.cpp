@@ -16,17 +16,10 @@ int UltrasonicSensor::get_distance() {
     } else {
         distance = _last_valid;
     }
-
-    Serial.print("Distance: ");
-    Serial.print(distance);
-    Serial.println(" cm");
-
+    
     return distance;
 }
 
 boolean UltrasonicSensor::is_object_detected() {
-        Serial.print("Distance: ");
-    Serial.print(get_distance());
-    Serial.println(" cm");
     return get_distance() < _detection_threshold_cm;
 }

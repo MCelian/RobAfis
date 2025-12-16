@@ -2,6 +2,7 @@
 #include "MeMegaPi.h" // The ONLY file to include this!
 #include "Wire.h"
 #include "UltrasonicSensor.h"
+#include "Ihm.h"
 
 #define LINE_FOLLOWER_SENSOR_PORT PORT_8
 #define COLOR_SENSOR_PORT PORT_7
@@ -18,10 +19,6 @@ static MeLineFollower line_follower(LINE_FOLLOWER_SENSOR_PORT);
 static MeColorSensor color_sensor(COLOR_SENSOR_PORT);
 static MeGyro gyro_sensor(GYRO_SENSOR_PORT);
 static MeUltrasonicSensor ultrasonic_sensor(ULTRASOUND_SENSOR_PORT);
-
-// static LineFollowerSensor lineFollower(&line_follower);
-// static ColorSensor colorSensor(&color_sensor);
-// static MeBluetooth bluetooth(BLUETOOTH_MODULE_PORT);
 
 static Motor motor_arm(ARM_MOTOR_PORT);
 static Motor motor_chassis_advance(CHASSIS_FB_MOTOR_PORT);
@@ -52,6 +49,14 @@ Arm* Robot::arm() {
 
 void Robot::initialize_sensors() {
     _gyroscope->initialize();
+
+}
+
+void Robot::do_emergency_stop() {
+    _chassis->stop_movement();
+    _chassis->stop_steering();
+    _arm->stop();
+    _arm->stop_claw();
 }
 
 void Robot::move_arm() {
@@ -78,6 +83,7 @@ void Robot::move_left_right_randomly() {
 
 
 }
+
 
 void Robot::do_scenario_auto_test() {
     boolean is_object_detected = _ultrasonic->is_object_detected();
