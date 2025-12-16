@@ -1,12 +1,35 @@
 #include "Chassis.h"
-#include <Arduino.h>
+#include "Motor.h"
 
-Chassis::Chassis(MeMegaPiDCMotor* motor_av_rec, MeMegaPiDCMotor* motor_gauche_droite, int vitesse_ar_defaut, int vitesse_dg_defaut)
+#define MAX_SPEED 255
+#define STOP_SPEED 0
+    
+Chassis::Chassis(Motor* motor_advance, Motor* motor_steering)
 {
-    // Store the pointers to the motor objects
-    _moteurAvRec = motor_av_rec;
-    _moteurGaucheDroite = motor_gauche_droite;
-    // Stockage des vitesses par défaut dans les variables privées de la classe
-    _vitesseARDefaut = abs(vitesse_ar_defaut); // Assurez-vous qu'elle est positive
-    _vitesseDGDefaut = abs(vitesse_dg_defaut); // Assurez-vous qu'elle est positive
+    _motor_advance = motor_advance;
+    _motor_steering = motor_steering;
+}
+
+void Chassis::forward() {
+    _motor_advance->set_analogic_speed(MAX_SPEED);
+}
+
+void Chassis::backward() {
+    _motor_advance->set_analogic_speed(-MAX_SPEED);
+}
+
+void Chassis::turn_left() {
+    _motor_steering->set_analogic_speed(MAX_SPEED);
+}
+
+void Chassis::turn_right() {
+    _motor_steering->set_analogic_speed(-MAX_SPEED);
+}
+
+void Chassis::stop_movement() {
+    _motor_advance->set_analogic_speed(STOP_SPEED);
+}
+
+void Chassis::stop_steering() {
+    _motor_steering->set_analogic_speed(STOP_SPEED);
 }
