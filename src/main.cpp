@@ -1,26 +1,50 @@
 #include "Arduino.h"
 #include "Robot.h"
-
-#define BT Serial3  // Bluetooth sur MegaPi
-unsigned long lastTime = 0;
-const unsigned long INTERVAL = 500; 
+#include "Ihm.h"
 
 Robot robot;
+Ihm ihm(&Serial3);
 
 void setup() {
   Serial.begin(9600);
-  BT.begin(115200);
-  Serial.println("MegaPi demarre");
-  BT.println("MegaPi demarre");
+  ihm.initialize(115200);
   robot.initialize_sensors();
 }
 
 void loop() {
-  // unsigned long now = millis();
+  char command = ihm.readCommand();
+  switch (command)
+  {
+  case '0':
+  break;
+  
+  case '1':
+    
+  break;
 
-  // if (now - lastTime >= INTERVAL) {
-  //   lastTime = now;
-  // }
-  // robot.do_scenario_auto_test();
-  robot.do_scenario_auto_test();
+  case '2':
+    
+  break;
+
+  case '3':
+    
+  break;
+
+  case '4':
+    ihm.println("Executing: Emergency Stop");
+    robot.do_emergency_stop();
+  break;
+  
+  case '5':
+    
+  break;
+
+  case '6':
+    ihm.println("Executing: Auto Test Scenario");
+    robot.do_scenario_auto_test();
+  break;
+
+  default:
+    break;
+  }
 }
