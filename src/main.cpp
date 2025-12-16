@@ -1,34 +1,26 @@
-#include <Arduino.h>
-#include "Robot.h" // On inclut uniquement la classe principale Robot
+#include "Arduino.h"
+#include "Robot.h"
 
-// On crée une seule instance de notre Robot.
-// C'est le constructeur de Robot qui s'occupera de créer le châssis et le bras.
+#define BT Serial3  // Bluetooth sur MegaPi
+unsigned long lastTime = 0;
+const unsigned long INTERVAL = 500; 
+
 Robot robot;
 
 void setup() {
   Serial.begin(9600);
+  BT.begin(115200);
+  Serial.println("MegaPi demarre");
+  BT.println("MegaPi demarre");
+  robot.initialize_sensors();
 }
 
 void loop() {
-  // On contrôle le robot via ses méthodes de haut niveau.
-  robot.avancer();
-  delay(2000);
-  robot.arreterAvancement();
-  delay(1000);
-  robot.reculer(100);
-  delay(2000);
-  robot.arreterAvancement();
-  delay(1000);
-  robot.droite();
-  delay(2000);
-  robot.arreterDirection();
-  delay(1000);
-  robot.gauche(100);
-  delay(2000);
-  robot.arreterDirection();
-  delay(3000);
+  // unsigned long now = millis();
 
-  robot.leverBras();
-  delay(2000);
-  robot.arreterBras();
+  // if (now - lastTime >= INTERVAL) {
+  //   lastTime = now;
+  // }
+  // robot.do_scenario_auto_test();
+  robot.do_scenario_auto_test();
 }
