@@ -5,7 +5,7 @@
 
 class Arm {
 public:
-    Arm(Motor* motor, Motor* _motor_claw);
+    Arm(int motor_arm_port, int motor_claw_port);
     void raise();
     void lower();
     void open_claw();
@@ -15,7 +15,7 @@ public:
 
 private:
     friend class Robot; // Allow Robot class to access private members
-    Motor* _motor;
+    Motor* _motor_arm;
     Motor* _motor_claw;
 };
 

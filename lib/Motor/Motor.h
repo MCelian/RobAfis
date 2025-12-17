@@ -14,7 +14,7 @@ public:
     float get_final_speed();
 
 private:
-    MeMegaPiDCMotor* _MeMotor;
+    MeMegaPiDCMotor* _me_motor;
     int _motor_rpm;
     int _motor_voltage;
     int _current_analogic_speed;

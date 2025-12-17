@@ -4,14 +4,14 @@
 
 Motor::Motor(int port)
 {
-    _MeMotor = new MeMegaPiDCMotor(port);
+    _me_motor = new MeMegaPiDCMotor(port);
     _current_analogic_speed = 0;
     _port = port;
 }
 
 void Motor::set_analogic_speed(int speed) {
     _current_analogic_speed = speed;
-    _MeMotor->run(speed);
+    _me_motor->run(speed);
 }
 
 float Motor::get_shaft_speed() {
