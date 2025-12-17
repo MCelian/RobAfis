@@ -72,35 +72,40 @@ void Robot::do_resume() {
 }
 
 void Robot::do_scenario_auto_test() {
-    // boolean is_object_detected = _ultrasonic->is_object_detected();
-    // boolean is_line_detected = _line_follower_sensor->is_line_detected();
+    boolean is_object_detected = _ultrasonic->is_object_detected();
+    boolean is_line_detected = _line_follower_sensor->is_line_detected();
 
-    // _chassis->stop_movement();
+    _chassis->stop_movement();
 
-    // if (!is_line_detected && !is_object_detected) {
-    //     _chassis->forward();
-    // }
+    if (!is_line_detected && !is_object_detected) {
+        _chassis->forward();
+    }
 
-    // else if (is_line_detected && is_object_detected) {
-    //     _chassis->stop_movement();
-    // }
+    else if (is_line_detected && is_object_detected) {
+        _chassis->stop_movement();
+    }
 
-    // else if (is_line_detected && !is_object_detected) {
-    //     _chassis->backward();
-    //     delay(2000);
-    // }
+    else if (is_line_detected && !is_object_detected) {
+        _chassis->stop_movement();
+        delay(500);
+        _chassis->backward();
+        delay(2000);
+    }
 
-    // else if (!is_line_detected && is_object_detected) {
-    //     _chassis->stop_movement();
-    //     Serial.println(random(2));
-    //     random(2) == 0 ? _chassis->turn_left() : _chassis->turn_right();
-    //     delay(700);
-    //     _chassis->stop_steering();
-    // }
+    else if (!is_line_detected && is_object_detected) {
+        _chassis->stop_movement();
+        Serial.println(random(2));
+        random(2) == 0 ? _chassis->steer_to_angle(-25) : _chassis->steer_to_angle(25);
+        delay(700);
+        _chassis->stop_steering();
+    }
 }
 
 void Robot::do_scenario_try() {
-    
+    _arm->close_claw();
+    delay(2000);
+    _arm->open_claw();
+    delay(1000);
 }
 
 void Robot::do_scenario_conversion() {
@@ -134,17 +139,45 @@ int Robot::get_score() {
 String Robot::get_robot_data() {
     String data = "Score: ";
     data += String(get_score());
+
+    data += "\ncurrent scenario: ";
+    data += String(_status);
+    data += "\n";
+
+    data += "\nCurrent action: ";
+    data += String(_status);
+    data += "\n";
+
     data += "\nCurrent zone: ";
     data += String(_current_zone);
     data += "\nObject detected: ";
-    data += String(_ultrasonic->is_object_detected());
-    data += "\nLine detected: ";
-    data += String(_line_follower_sensor->is_line_detected());
-    data += "\nStatus: ";
-    data += String(_status);
+
+    data += "\nBall is held ?: ";
+    data += "False";//TODO
     data += "\n";
-    data += "Angle X: ";
-    data += String(_chassis->_gyroscope->get_angle_x());
+
+    data += "\nBall position: ";
+    data += "False"; //TODO
+    data += "\n";
+
+    // DEBUG 
+    data += "\nObject is detected?: ";
+    data += String(_ultrasonic->is_object_detected());
+    data += "\n";
+
+    data += "\nUltrasonic distance: ";
+    data += String(_ultrasonic->get_distance());
+    data += "\n";
+
+    data += "Is line detected: ";
+    data += String(_line_follower_sensor->is_line_detected());
+    data += "\n";
+
+    data += "Angle Z: ";
+    data += String(_chassis->_gyroscope->get_angle_z());
     data += " \n";
+
+    data += " \n";
+
     return data;
 }

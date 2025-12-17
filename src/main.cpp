@@ -17,7 +17,6 @@ void send_data_ihm() {
 
 void loop() {
   robot.chassis()->update_sensors();
-
   char command = ihm.readCommand();
   Serial.println(command);
   delay(100);
