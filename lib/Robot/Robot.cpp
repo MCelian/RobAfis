@@ -4,17 +4,6 @@
 #include "UltrasonicSensor.h"
 #include "Ihm.h"
 
-#define LINE_FOLLOWER_SENSOR_PORT PORT_8
-#define COLOR_SENSOR_PORT PORT_7
-#define GYRO_SENSOR_PORT PORT_6
-#define ULTRASOUND_SENSOR_PORT PORT_5
-//#define BLUETOOTH_MODULE_PORT PORT_4
-
-#define CHASSIS_FB_MOTOR_PORT PORT1B
-#define CHASSIS_LR_MOTOR_PORT PORT2B
-#define ARM_MOTOR_PORT PORT3B
-#define ARM_MOTOR_CLAW_PORT PORT4B
-
 static MeLineFollower line_follower(LINE_FOLLOWER_SENSOR_PORT);
 static MeColorSensor color_sensor(COLOR_SENSOR_PORT);
 static MeGyro gyro_sensor(GYRO_SENSOR_PORT);

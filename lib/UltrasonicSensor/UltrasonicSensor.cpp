@@ -8,16 +8,7 @@ int UltrasonicSensor::set_detection_threshold(int thresholdCm) {
 }
 
 int UltrasonicSensor::get_distance() {
-    int distance = 0;
-    int measure = (int)_s->distanceCm();
-    if (measure > 5 && measure < 400) {
-        distance = measure;
-        _last_valid = measure;
-    } else {
-        distance = _last_valid;
-    }
-    
-    return distance;
+    return _s->distanceCm();
 }
 
 boolean UltrasonicSensor::is_object_detected() {

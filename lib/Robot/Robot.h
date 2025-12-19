@@ -9,6 +9,16 @@
 #include "Gyroscope.h"
 #include "LineFollowerSensor.h"
 
+#define LINE_FOLLOWER_SENSOR_PORT PORT_8
+#define COLOR_SENSOR_PORT PORT_7
+#define ULTRASOUND_SENSOR_PORT PORT_6
+#define GYRO_SENSOR_PORT PORT_5
+
+#define CHASSIS_FB_MOTOR_PORT PORT1B
+#define CHASSIS_LR_MOTOR_PORT PORT2B
+#define ARM_MOTOR_PORT PORT3B
+#define ARM_MOTOR_CLAW_PORT PORT4B
+
 class Robot {
 public:
     Robot();
