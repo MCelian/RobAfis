@@ -12,6 +12,7 @@ void setup() {
 }
 
 void loop() {
+  robot.chassis()->update_motors();
   char command = ihm.readCommand();
   switch (command)
   {

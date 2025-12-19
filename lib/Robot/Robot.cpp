@@ -2,6 +2,7 @@
 #include "MeMegaPi.h" // The ONLY file to include this!
 #include "Wire.h"
 #include "UltrasonicSensor.h"
+#include "MotorTypeA.h"
 #include "Ihm.h"
 
 static MeLineFollower line_follower(LINE_FOLLOWER_SENSOR_PORT);
@@ -10,8 +11,8 @@ static MeGyro gyro_sensor(GYRO_SENSOR_PORT);
 static MeUltrasonicSensor ultrasonic_sensor(ULTRASOUND_SENSOR_PORT);
 
 static Motor motor_arm(ARM_MOTOR_PORT);
-static Motor motor_chassis_advance(CHASSIS_FB_MOTOR_PORT);
-static Motor motor_chassis_steering(CHASSIS_LR_MOTOR_PORT);
+static MotorTypeA motor_chassis_advance(CHASSIS_FB_MOTOR_PORT);
+static MotorTypeA motor_chassis_steering(CHASSIS_LR_MOTOR_PORT);
 static Motor motor_arm_claw(ARM_MOTOR_CLAW_PORT); // Motor on PORT4B
 
 Robot::Robot() {
@@ -21,6 +22,7 @@ Robot::Robot() {
     _ultrasonic->set_detection_threshold(20);
     _gyroscope = new Gyroscope(&gyro_sensor);
     _line_follower_sensor = new LineFollowerSensor(&line_follower);
+    initialize_motors_position();
 }
 
 Robot::~Robot() {
@@ -39,6 +41,17 @@ Arm* Robot::arm() {
 void Robot::initialize_sensors() {
     _gyroscope->initialize();
 
+}
+
+void Robot::initialize_motors_position() {
+    long savedSteeringPos;
+    EEPROM.get(4, savedSteeringPos);
+    
+    _chassis->getMotorSteering()->set_position(savedSteeringPos);
+    
+    long savedAdvancePos;
+    EEPROM.get(0, savedAdvancePos);
+    _chassis->getMotorAdvance()->set_position(savedAdvancePos);
 }
 
 void Robot::do_emergency_stop() {
@@ -97,7 +110,7 @@ void Robot::do_scenario_auto_test() {
         _chassis->stop_movement();
         Serial.println(random(2));
         // random(2) == 0 ? Serial.println("left") : Serial.println("right");
-        random(2) == 0 ? _chassis->turn_left() : _chassis->turn_right();
+        random(2) == 0 ? _chassis->align_left() : _chassis->align_right();
         delay(700);
         _chassis->stop_steering();
     }

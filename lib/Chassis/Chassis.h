@@ -8,10 +8,16 @@ public:
     Chassis(Motor* motorAdvance, Motor* motorSteering);
     void forward();
     void backward();
-    void turn_left();
-    void turn_right();
+    void align_left();
+    void align_right();
+    void align_center();
     void stop_movement();
     void stop_steering();
+    void update_motors();
+    void save_steering_pos();
+    
+    Motor* getMotorAdvance() { return _motor_advance; };
+    Motor* getMotorSteering() { return _motor_steering; };
 
 private:
     friend class Robot;

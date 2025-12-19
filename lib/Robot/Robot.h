@@ -29,6 +29,7 @@ public:
     void move_arm();
     void move();
     void initialize_sensors();
+    void initialize_motors_position();
     void do_scenario_auto_test();
     void do_scenario_try();
     void do_scenario_conversion();
