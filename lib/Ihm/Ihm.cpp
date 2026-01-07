@@ -3,7 +3,8 @@
 
 Ihm::Ihm(HardwareSerial* s) : _serial(s), _last_command_received('\0') {}
 
-void Ihm::initialize(long baudrate) {
+void Ihm::initialize() {
+    long baudrate = 115200;
         _serial->begin(baudrate);
         println("IHM Initialized");
     }
@@ -29,9 +30,3 @@ char Ihm::readCommand() {
     }
     return '\0';
 }
-//   unsigned long now = millis();
-
-//   if (now - lastTime >= INTERVAL) {
-//     lastTime = now;
-//   }
-//   robot.do_scenario_auto_test();

@@ -2,10 +2,10 @@
 
 LineFollowerSensor::LineFollowerSensor(MeLineFollower* s) : _s(s) {}
 
-int LineFollowerSensor::read_sensors() {
+int LineFollowerSensor::readSensors() {
     return _s->readSensors();
 }
 
-boolean LineFollowerSensor::is_line_detected() {
-    return read_sensors() != 3;
+bool LineFollowerSensor::isLineDetected() {
+    return readSensors() != 3;
 }

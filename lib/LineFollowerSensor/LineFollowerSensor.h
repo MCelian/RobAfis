@@ -6,8 +6,8 @@
 class LineFollowerSensor {
 public:
     LineFollowerSensor(MeLineFollower* s);
-    int read_sensors();
-    boolean is_line_detected();
+    int readSensors();
+    bool isLineDetected();
 private:
     MeLineFollower* _s;
 };

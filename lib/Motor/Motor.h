@@ -1,25 +1,33 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-class MeMegaPiDCMotor;
+#include "MeEncoderOnBoard.h" // Only the specific driver
 
 class Motor {
 public:
     Motor(int port);
-    void set_motor_rpm();
-    void set_motor_voltage();
-    void set_gear_ratio();
-    void set_analogic_speed(int speed);
-    float get_shaft_speed();
-    float get_final_speed();
+    void setPwm(int pwm);
+    void update();
+    int getPosition(); 
+    void setCurrentPosition(int pos);
+    int getRawPulsePos();
+    int getIntNum();
+    void pulsePosPlus();
+    void pulsePosMinus();
+    void stop();
+    int getPortB();
+    void setRatio(float ratio);
+    void setPulse(int pulseCount);
+    float getRatio();
+    bool checkAndStopIfBlocked(int noMoveThreshold);
+    int pulsesToDegrees(int pulses);
 
 private:
-    MeMegaPiDCMotor* _MeMotor;
-    int _motor_rpm;
-    int _motor_voltage;
-    int _current_analogic_speed;
-    float _gear_ratio;
-    int _port;
+    MeEncoderOnBoard _encoder;
+    int _positionOffset;
+    int _pulsePerDisc;
+    int _lastRawPulse;
+    int _noPulseCounter;
 };
 
 #endif

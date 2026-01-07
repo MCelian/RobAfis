@@ -6,7 +6,7 @@
 class Ihm {
 public:
     Ihm(HardwareSerial* serial);
-    void initialize(long baudrate);
+    void initialize();
     void print(const String& msg);
     void println(const String& msg);
     char readCommand();
