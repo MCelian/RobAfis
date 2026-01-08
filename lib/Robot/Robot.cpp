@@ -34,7 +34,7 @@ void Robot::doEmergencyStop() {
 
 
 void Robot::doScenarioAutoTest() {
-
+    Serial.println(_ultrasonicSensor->get_distance());
 }
 
 void Robot::doScenarioTry() {

@@ -8,9 +8,9 @@ Robot* myRobot = nullptr;
 void setup() {
   Serial.begin(9600);
   myRobot = RobotFactory::createRugbyRobot();
-  myRobot->doEmergencyStop();
+
 }
 
 void loop() {
-
+  myRobot->doScenarioAutoTest();
 }

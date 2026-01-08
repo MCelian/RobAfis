@@ -1,85 +1,119 @@
 #include "Chassis.h"
 #include "Arduino.h"
 
+Motor* tempMotor = nullptr;
+static void updatePulseCount() {
+    if (!tempMotor) return;
+    if (digitalRead(tempMotor->getPortB()) == 0) {
+        tempMotor->pulsePositionDecrement();
+    } else {
+        tempMotor->pulsePositionIncrement();
+    }
+}
+
 Chassis::Chassis(int portAdvance, int portSteering) {
     _motorAdvance = new Motor(portAdvance);
     _motorSteering = new Motor(portSteering);
-    float currentRatio = _motorSteering->getRatio();
-    float newRatioF = currentRatio * GEAR_MULTIPLIER;
-    _motorSteering->setRatio((int16_t)(newRatioF + 0.5f));
+    float currentRatio = _motorSteering->getGearRatio();
+    float newRatio = currentRatio * GEAR_MULTIPLIER;
+    _motorSteering->setGearRatio((int)(newRatio + 0.5f));
 
     _steerLeftLimit = 0;
     _steerRightLimit = 0;
 }
 
-Motor* tempMotor = nullptr;
+void Chassis::steerToPosition(int position) {
+    int pwmSign = (position - _motorSteering->getPulsePosition()) >= 0 ? +1 : -1;
 
-static void updatePulseCount() {
-    if (!tempMotor) return;
-    if (digitalRead(tempMotor->getPortB()) == 0) {
-        tempMotor->pulsePosMinus();
-    } else {
-        tempMotor->pulsePosPlus();
-    }
-}
-
-long Chassis::steerToPosition(int position) {
-    int pwmSign = (position - _motorSteering->getPosition()) >= 0 ? +1 : -1;
     int noMoveCount = 0;
-    _motorSteering->update();
-    long lastPos = _motorSteering->getPosition();
+    _motorSteering->updateEncoderValue();
+    int lastPos = _motorSteering->getPulsePosition();
 
     tempMotor = _motorSteering;
-    attachInterrupt(_motorSteering->getIntNum(), updatePulseCount, RISING);
+    attachInterrupt(_motorSteering->getInterruptionNumber(), updatePulseCount, RISING);
     _motorSteering->setPwm(pwmSign * FIND_PWM);
 
     while (noMoveCount < NO_MOVE_THRESHOLD && abs(position - lastPos) >= MARGIN_STEER_POSITION) {
-        _motorSteering->update();
+        _motorSteering->updateEncoderValue();
         delay(SAMPLE_MS);
-        long pos = _motorSteering->getPosition();
-        if (abs(pos - lastPos) <= MARGIN_STEER_POSITION) {
+        long pos = _motorSteering->getPulsePosition();
+        int delta = abs(pos - lastPos);
+
+        if (delta <= MARGIN_STEER_POSITION) {
             noMoveCount++;
         } else {
             noMoveCount = 0;
             lastPos = pos;
         }
 
-
         if (_motorSteering->checkAndStopIfBlocked(NO_MOVE_THRESHOLD)) {
             break;
         }
     }
     _motorSteering->stop();
-    detachInterrupt(_motorSteering->getIntNum());
+    detachInterrupt(_motorSteering->getInterruptionNumber());
     tempMotor = nullptr;
 
     delay(50);
-    return _motorSteering->getPosition();
 };
 
 void Chassis::findSteeringLimits() {
-    leftPos = steerToPosition(-9999);
-    long leftRaw = _motorSteering->getRawPulsePos();
-    long leftDeg = _motorSteering->getPosition();
-    long leftWheelDeg = _motorSteering->pulsesToDegrees(leftRaw);
+
+    steerToPosition(-9999);
+    int leftPulsePos = _motorSteering->getPulsePosition();
+    setSteerLeftLimit(leftPulsePos);
+
+    int leftRaw = _motorSteering->getRawPulsePosition();
+    int leftWheelDeg = _motorSteering->pulsesToDegrees(leftRaw);
 
     delay(150);
 
-    rightPos = steerToPosition(+9999);
-    long rightRaw = _motorSteering->getRawPulsePos();
-    long rightDeg = _motorSteering->getPosition();
-    long rightWheelDeg = _motorSteering->pulsesToDegrees(rightRaw);
+    steerToPosition(+9999);
+    int rightPulsePos = _motorSteering->getPulsePosition();
+    setSteerRightLimit(rightPulsePos);
 
-    _steerLeftLimit = leftPos;
-    _steerRightLimit = rightPos;
+    int rightRaw = _motorSteering->getRawPulsePosition();
+    int rightWheelDeg = _motorSteering->pulsesToDegrees(rightRaw);
 
-    long centerWheelDeg = (leftWheelDeg + rightWheelDeg) / 2;
-    long currentRaw = _motorSteering->getRawPulsePos();
-    long currentWheelDeg = _motorSteering->pulsesToDegrees(currentRaw);
-    long currentPos = _motorSteering->getPosition();
-    long centerTarget = currentPos + (centerWheelDeg - currentWheelDeg);
+    float centerWheelDeg = (leftWheelDeg + rightWheelDeg) / 2.0f;
+    setCenterWheelDeg(centerWheelDeg);
 
-    steerToPosition(centerTarget);
+    float centerOffset = getCenterWheelDeg() - getCurrentWheelDeg();
+    float newCenterPos = getCurrentPosition() + centerOffset;
+    setCenterPosition(newCenterPos);
+
+    steerCenter();
+
 }
 
-    
+void Chassis::steerUntilStop(int pwmSign) {
+    steerToPosition(pwmSign * 9999);
+    setCurrentRaw(_motorSteering->getRawPulsePosition());
+    setCurrentWheelDeg(_motorSteering->pulsesToDegrees(getCurrentRaw()));
+    setCurrentRaw(_motorSteering->getRawPulsePosition());
+    setCurrentWheelDeg(_motorSteering->pulsesToDegrees(getCurrentRaw()));
+}
+
+void Chassis::steerLeft() {
+    steerUntilStop(-1);
+}
+
+void Chassis::steerRight() {
+    steerToPosition(+1);
+}
+
+void Chassis::steerCenter() {
+    steerToPosition(getCenterPosition());
+}
+
+void Chassis::advanceForward() {
+    _motorAdvance->setPwm(-ADVANCE_SPEED);
+}
+
+void Chassis::advanceBackward() {
+    _motorAdvance->setPwm(ADVANCE_SPEED);
+}
+
+void Chassis::advanceStop() {
+    _motorAdvance->setPwm(0);
+}
