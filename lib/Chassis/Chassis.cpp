@@ -23,6 +23,7 @@ Chassis::Chassis(int portAdvance, int portSteering) {
 }
 
 void Chassis::steerToPosition(int position) {
+    _motorSteering->stop();
     int pwmSign = (position - _motorSteering->getPulsePosition()) >= 0 ? +1 : -1;
 
     int noMoveCount = 0;
@@ -58,8 +59,10 @@ void Chassis::steerToPosition(int position) {
 };
 
 void Chassis::findSteeringLimits() {
-
+    _motorSteering->stop();
     steerToPosition(-9999);
+    _motorSteering->stop();
+
     int leftPulsePos = _motorSteering->getPulsePosition();
     setSteerLeftLimit(leftPulsePos);
 
@@ -69,6 +72,7 @@ void Chassis::findSteeringLimits() {
     delay(150);
 
     steerToPosition(+9999);
+    _motorSteering->stop();
     int rightPulsePos = _motorSteering->getPulsePosition();
     setSteerRightLimit(rightPulsePos);
 
@@ -77,13 +81,14 @@ void Chassis::findSteeringLimits() {
 
     float centerWheelDeg = (leftWheelDeg + rightWheelDeg) / 2.0f;
     setCenterWheelDeg(centerWheelDeg);
-
+    _motorSteering->stop();
+    
     float centerOffset = getCenterWheelDeg() - getCurrentWheelDeg();
     float newCenterPos = getCurrentPosition() + centerOffset;
     setCenterPosition(newCenterPos);
 
     steerCenter();
-
+    _motorSteering->stop();
 }
 
 void Chassis::steerUntilStop(int pwmSign) {
@@ -95,11 +100,11 @@ void Chassis::steerUntilStop(int pwmSign) {
 }
 
 void Chassis::steerLeft() {
-    steerToPosition(getSteerLeftLimit() + MARGIN_STEER_POSITION);
+    steerToPosition(getSteerLeftLimit() + 15);
 }
 
 void Chassis::steerRight() {
-    steerToPosition(getSteerRightLimit() - MARGIN_STEER_POSITION);
+    steerToPosition(getSteerRightLimit() - 15);
 }
 
 void Chassis::steerCenter() {
@@ -116,4 +121,14 @@ void Chassis::advanceBackward() {
 
 void Chassis::advanceStop() {
     _motorAdvance->setPwm(0);
+}
+
+void Chassis::waitAndKeepAlive(unsigned long ms) {
+    unsigned long start = millis();
+    while (millis() - start < ms) {
+        // Keep the PID loops alive!
+        _motorAdvance->updateEncoderValue();
+        _motorSteering->updateEncoderValue();
+        delay(5); // Short delay to save CPU
+    }
 }

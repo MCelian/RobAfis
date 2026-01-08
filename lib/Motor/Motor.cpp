@@ -16,6 +16,7 @@ int Motor::pulsesToDegrees(int pulses) {
 
 bool Motor::checkAndStopIfBlocked(int maxNoPulseIncrements) {
     int curr = getRawPulsePosition();
+
     if (curr == _lastRawPulse) {
         _noPulseCounter++;
     } else {

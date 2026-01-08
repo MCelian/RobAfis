@@ -15,8 +15,10 @@ public:
 
     void addChassis(int drivePort, int steerPort);
     void addArm(int port);
+    void addClaw(int port);
     void addUltrasonicSensor(int port);
     void addLineFollowerSensor(int port);
+    void addColorSensor(int port);
 private:
     Robot* _robot;
 };

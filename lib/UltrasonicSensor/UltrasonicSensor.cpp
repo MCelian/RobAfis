@@ -2,7 +2,7 @@
 
 UltrasonicSensor::UltrasonicSensor(int port) {
     _sensor = new MeUltrasonicSensor(port);
-    _detectionThresholdCm = 20;
+    _detectionThresholdCm = 19;
     _lastValid = 0;
 }
 
@@ -12,7 +12,21 @@ int UltrasonicSensor::setDetectionThreshold(int thresholdCm) {
 }
 
 int UltrasonicSensor::getDistance() {
-    return _sensor->distanceCm();
+    int sum = 0;
+    int attempts = 0;
+    for (int attempt = 0; attempt < 5; attempt++) {
+        int dist = _sensor->distanceCm();
+        if (dist > 0 && dist < 400) {
+            _lastValid = dist;
+            sum += dist;
+            attempts++;
+        }
+        delay(50);
+    }
+    if (attempts > 0) {
+        _lastValid = (sum + 2) / (attempts);
+    }
+    return _lastValid;
 }
 
 boolean UltrasonicSensor::isObjectDetected() {

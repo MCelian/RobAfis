@@ -6,6 +6,7 @@
 class UltrasonicSensor {
 public:
     UltrasonicSensor(int port);
+    void initialize() { while (getDistance() == 0 || getDistance() == 400) { getDistance(); } };
     int setDetectionThreshold(int thresholdCm);
     int getDistance();
     boolean isObjectDetected();

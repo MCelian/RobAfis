@@ -8,7 +8,7 @@
 #define MARGIN_STEER_POSITION 5
 #define GEAR_MULTIPLIER 72.0f / 8.0f
 
-#define ADVANCE_SPEED 255
+#define ADVANCE_SPEED 200
 
 class Chassis {
 public:
@@ -41,6 +41,8 @@ public:
 
     int getCurrentPosition() const { return _currentPostion; }
     void setCurrentPosition(int currentPostion) { _currentPostion = currentPostion; }
+
+    void waitAndKeepAlive(unsigned long ms);
 private:
     Motor* _motorAdvance;
     Motor* _motorSteering;
