@@ -6,13 +6,13 @@
 class UltrasonicSensor {
 public:
     UltrasonicSensor(int port);
-    int set_detection_threshold(int thresholdCm);
-    int get_distance();
-    boolean is_object_detected();
+    int setDetectionThreshold(int thresholdCm);
+    int getDistance();
+    boolean isObjectDetected();
 private:
     MeUltrasonicSensor* _sensor;
-    int _detection_threshold_cm;
-    int _last_valid;
+    int _detectionThresholdCm;
+    int _lastValid;
 };
 
 #endif

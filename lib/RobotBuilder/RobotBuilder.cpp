@@ -36,3 +36,7 @@ void RobotBuilder::addArm(int port) {
 void RobotBuilder::addUltrasonicSensor(int port) {
     _robot->setUltrasonicSensor(new UltrasonicSensor(port));
 }
+
+void RobotBuilder::addLineFollowerSensor(int port) {
+    _robot->setLineFollowerSensor(new LineFollowerSensor(port));
+}

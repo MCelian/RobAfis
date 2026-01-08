@@ -8,7 +8,7 @@
 #define MARGIN_STEER_POSITION 5
 #define GEAR_MULTIPLIER 72.0f / 8.0f
 
-#define ADVANCE_SPEED 150
+#define ADVANCE_SPEED 255
 
 class Chassis {
 public:

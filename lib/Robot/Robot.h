@@ -5,15 +5,18 @@
 #include "Arm.h"
 #include "Claw.h"
 #include "UltrasonicSensor.h"
+#include "LineFollowerSensor.h"
 
 class Robot {
 public:
-    Robot();
-    ~Robot();
-    void setChassis(Chassis* chassis);
-    void setArm(Arm* arm);
-    void setClaw(Claw* claw);
-    void setUltrasonicSensor(UltrasonicSensor* sensor);
+    Robot() { _chassis = nullptr; _arm = nullptr; _ultrasonicSensor = nullptr; _lineFollowerSensor = nullptr; }
+    ~Robot() { delete _arm; delete _chassis; delete _ultrasonicSensor; delete _lineFollowerSensor; }
+    void setChassis(Chassis* chassis) { delete _chassis; _chassis = chassis; };
+    void setArm(Arm* arm) { delete _arm; _arm = arm; };
+    void setClaw(Claw* claw) { delete _claw; _claw = claw; }
+    void setUltrasonicSensor(UltrasonicSensor* sensor) { delete _ultrasonicSensor; _ultrasonicSensor = sensor; }
+    void setLineFollowerSensor(LineFollowerSensor* sensor) { delete _lineFollowerSensor; _lineFollowerSensor = sensor; }
+    void initializeChassis() { _chassis->findSteeringLimits(); }
     void doScenarioAutoTest();
     void doScenarioTry();
     void doScenarioConversion();
@@ -24,6 +27,7 @@ private:
     Arm* _arm;
     Claw* _claw;
     UltrasonicSensor* _ultrasonicSensor;
+    LineFollowerSensor* _lineFollowerSensor;
 };
 
 #endif

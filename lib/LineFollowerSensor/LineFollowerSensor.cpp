@@ -1,11 +1,25 @@
 #include "LineFollowerSensor.h"
 
-LineFollowerSensor::LineFollowerSensor(MeLineFollower* s) : _s(s) {}
+LineFollowerSensor::LineFollowerSensor(int port) {
+    _sensor = new MeLineFollower(port);
+}
 
 int LineFollowerSensor::readSensors() {
-    return _s->readSensors();
+    return _sensor->readSensors();
 }
 
 bool LineFollowerSensor::isLineDetected() {
-    return readSensors() != 3;
+    return readSensors() != 0;
+}
+
+bool LineFollowerSensor::isLineDetectedLeft() {
+    return readSensors() != 1;
+}
+
+bool LineFollowerSensor::isLineDetectedRight() {
+    return readSensors() == 2;
+}
+
+bool LineFollowerSensor::isLineNotDetected() {
+    return readSensors() == 3;
 }

@@ -95,11 +95,11 @@ void Chassis::steerUntilStop(int pwmSign) {
 }
 
 void Chassis::steerLeft() {
-    steerUntilStop(-1);
+    steerToPosition(getSteerLeftLimit() + MARGIN_STEER_POSITION);
 }
 
 void Chassis::steerRight() {
-    steerToPosition(+1);
+    steerToPosition(getSteerRightLimit() - MARGIN_STEER_POSITION);
 }
 
 void Chassis::steerCenter() {
