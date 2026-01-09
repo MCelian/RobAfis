@@ -10,6 +10,8 @@ public:
     void print(const String& msg);
     void println(const String& msg);
     char readCommand();
+    String writeCommand(const String& command);
+    static const String ESSAI;
 
 private:
     HardwareSerial* _serial;

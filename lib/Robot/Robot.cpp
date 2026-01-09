@@ -1,5 +1,9 @@
 #include "Robot.h"
 #include "MeUltrasonicSensor.h"
+#include "Ihm.h"
+
+// Global IHM instance is defined in main.cpp
+extern Ihm ihm;
 
 Robot::Robot() {
     _chassis = nullptr;
@@ -46,6 +50,8 @@ void Robot::doScenarioAutoTest() {
         _chassis->advanceForward();
     }
     _arm->moveToGrabPosition();
+    
+    ihm.writeCommand("POINT5 5");
 }
 
 void Robot::pivotLookLeft() {

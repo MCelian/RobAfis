@@ -30,3 +30,22 @@ char Ihm::readCommand() {
     }
     return '\0';
 }
+
+String Ihm::writeCommand(const String& command) {
+    println(command);
+    delay(50); // Wait for the command to be processed
+    if (command == "POINT5 5") {
+        //Afficher le message pour dire que le robot à marqué
+        println("ESSAI MARQUE!");
+
+    } else {
+        String response = "";
+        while (_serial->available() > 0) {
+            char c = (char)_serial->read();
+            response += c;
+            delay(5); // Small delay to allow more data to arrive
+        }
+        return response;
+    }
+    return "";
+}
