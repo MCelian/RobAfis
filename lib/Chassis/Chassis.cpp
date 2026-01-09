@@ -21,13 +21,13 @@ Chassis::Chassis(int portAdvance, int portSteering) {
     _steerLeftLimit = 0;
     _steerRightLimit = 0;
 }
-
+// pwm negative -> left
 void Chassis::steerToPosition(int position) {
-    _motorSteering->stop();
     int pwmSign = (position - _motorSteering->getPulsePosition()) >= 0 ? +1 : -1;
 
     int noMoveCount = 0;
     _motorSteering->updateEncoderValue();
+
     int lastPos = _motorSteering->getPulsePosition();
 
     tempMotor = _motorSteering;
@@ -46,10 +46,6 @@ void Chassis::steerToPosition(int position) {
             noMoveCount = 0;
             lastPos = pos;
         }
-
-        if (_motorSteering->checkAndStopIfBlocked(NO_MOVE_THRESHOLD)) {
-            break;
-        }
     }
     _motorSteering->stop();
     detachInterrupt(_motorSteering->getInterruptionNumber());
@@ -59,33 +55,30 @@ void Chassis::steerToPosition(int position) {
 };
 
 void Chassis::findSteeringLimits() {
-    _motorSteering->stop();
-    steerToPosition(-9999);
-    _motorSteering->stop();
+    steerUntilStop(-1);
 
-    int leftPulsePos = _motorSteering->getPulsePosition();
-    setSteerLeftLimit(leftPulsePos);
+    setSteerLeftLimit(_motorSteering->getRawPulsePosition());
 
-    int leftRaw = _motorSteering->getRawPulsePosition();
-    int leftWheelDeg = _motorSteering->pulsesToDegrees(leftRaw);
+    int leftWheelDeg = _motorSteering->pulsesToDegrees(getSteerLeftLimit());
 
     delay(150);
 
-    steerToPosition(+9999);
-    _motorSteering->stop();
-    int rightPulsePos = _motorSteering->getPulsePosition();
-    setSteerRightLimit(rightPulsePos);
+    steerUntilStop(+1);
+    setSteerRightLimit(_motorSteering->getPulsePosition());
 
-    int rightRaw = _motorSteering->getRawPulsePosition();
-    int rightWheelDeg = _motorSteering->pulsesToDegrees(rightRaw);
+    int rightWheelDeg = _motorSteering->pulsesToDegrees(_motorSteering->getRawPulsePosition());
 
-    float centerWheelDeg = (leftWheelDeg + rightWheelDeg) / 2.0f;
+    Serial.print("Left limit Degrees"); Serial.println(getSteerLeftLimit());
+    Serial.print("Right limit Degrees"); Serial.println(getSteerRightLimit());
+
+    int centerWheelDeg = (leftWheelDeg + rightWheelDeg) / 2;
     setCenterWheelDeg(centerWheelDeg);
-    _motorSteering->stop();
+    Serial.print("Center limit Degrees"); Serial.println(getCenterWheelDeg());
     
     float centerOffset = getCenterWheelDeg() - getCurrentWheelDeg();
     float newCenterPos = getCurrentPosition() + centerOffset;
-    setCenterPosition(newCenterPos);
+    
+    setCenterPosition(centerWheelDeg);
 
     steerCenter();
     _motorSteering->stop();
@@ -93,8 +86,6 @@ void Chassis::findSteeringLimits() {
 
 void Chassis::steerUntilStop(int pwmSign) {
     steerToPosition(pwmSign * 9999);
-    setCurrentRaw(_motorSteering->getRawPulsePosition());
-    setCurrentWheelDeg(_motorSteering->pulsesToDegrees(getCurrentRaw()));
     setCurrentRaw(_motorSteering->getRawPulsePosition());
     setCurrentWheelDeg(_motorSteering->pulsesToDegrees(getCurrentRaw()));
 }

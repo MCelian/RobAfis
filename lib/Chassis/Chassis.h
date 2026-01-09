@@ -3,7 +3,7 @@
 
 #include "Motor.h"
 #define FIND_PWM 100
-#define SAMPLE_MS 50
+#define SAMPLE_MS 100
 #define NO_MOVE_THRESHOLD 5
 #define MARGIN_STEER_POSITION 5
 #define GEAR_MULTIPLIER 72.0f / 8.0f
@@ -43,6 +43,11 @@ public:
     void setCurrentPosition(int currentPostion) { _currentPostion = currentPostion; }
 
     void waitAndKeepAlive(unsigned long ms);
+
+    void steerUntilStop(int pwmSign);
+
+    void steerToPosition(int position);
+    
 private:
     Motor* _motorAdvance;
     Motor* _motorSteering;
@@ -53,8 +58,6 @@ private:
     int _currentWheelDeg = 0;
     int _currentPostion = 0;
     int _centerPosition = 0;
-    void steerUntilStop(int pwmSign);
-    void steerToPosition(int position);
 };
 
 #endif
