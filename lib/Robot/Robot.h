@@ -31,6 +31,13 @@ public:
     void lineDetectedCountIncrement() { _lineDetectedCount++; }
     void lineDetectedCountDecrement() { _lineDetectedCount--; }
     void lineDetectedCountReset() { _lineDetectedCount = 0; }
+
+    int getColorData() { return _colorSensor->getColor(); }
+    int getDistanceData() { return _ultrasonicSensor->getDistance(); }
+    int getLineSensorData() { return _lineFollowerSensor->readSensors(); }
+    bool isLineDetectedData() { return _lineFollowerSensor->isLineDetected(); }
+    String getColorName() { return _colorSensor->getCurrentColorName(); }
+    void getRobotData();
 private:
     Chassis* _chassis;
     Arm* _arm;

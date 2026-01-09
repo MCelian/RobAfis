@@ -5,6 +5,8 @@
 Robot* robot = nullptr;
 Ihm ihm(&Serial3);
 
+void sendDataToIhm();
+
 void setup() {
   Serial.begin(9600);
   ihm.initialize();
@@ -76,4 +78,22 @@ void loop() {
   default:
     break;
   }
+  
+  sendDataToIhm();
+}
+
+void sendDataToIhm() {
+    int color = robot->getColorData();
+    String colorName = robot->getColorName();
+    int distance = robot->getDistanceData();
+    int lineSensorState = robot->getLineSensorData();
+    bool isLineDetected = robot->isLineDetectedData();
+    
+    String data = "SENSOR_DATA|";
+    data += "Color:" + colorName + "|";
+    data += "Distance:" + String(distance) + "cm|";
+    data += "LineSensor:" + String(lineSensorState) + "|";
+    data += "LineDetected:" + String(isLineDetected ? "OUI" : "NON");
+    
+    ihm.println(data);
 }

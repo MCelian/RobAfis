@@ -194,3 +194,34 @@ void Robot::doScenarioTry() {
 void Robot::doScenarioConversion() {
 
 }
+
+void Robot::getRobotData() {
+    // Get Color data from the color sensor
+    int color = _colorSensor->getColor();
+    String colorName = _colorSensor->getCurrentColorName();
+    
+    // Get Distance data from the ultrasonic sensor
+    int distance = _ultrasonicSensor->getDistance();
+    
+    // Get Line Sensor data from the line follower sensor
+    int lineSensorState = _lineFollowerSensor->readSensors();
+    bool isLineDetected = _lineFollowerSensor->isLineDetected();
+    
+    // Print the data to Serial for debugging
+    Serial.print("Couleur détectée: ");
+    Serial.print(colorName);
+    Serial.print(" (");
+    Serial.print(color);
+    Serial.println(")");
+    
+    Serial.print("Distance mesurée (cm): ");
+    Serial.println(distance);
+    
+    Serial.print("État capteur de ligne: ");
+    Serial.println(lineSensorState);
+    
+    Serial.print("Ligne détectée: ");
+    Serial.println(isLineDetected ? "OUI" : "NON");
+    
+    Serial.println("---");
+}
