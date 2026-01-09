@@ -39,6 +39,7 @@ void Robot::doScenarioAutoTest() {
     _claw->stop();
     _arm->moveToGrabPosition();
     _claw->close();
+    ihm.writeCommand("Ballon 1");
     delay(6000);
     _claw->stop();
     _arm->stop();

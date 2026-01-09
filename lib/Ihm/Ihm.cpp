@@ -34,11 +34,16 @@ char Ihm::readCommand() {
 String Ihm::writeCommand(const String& command) {
     println(command);
     delay(50); // Wait for the command to be processed
-    if (command == "POINT5 5") {
-        //Afficher le message pour dire que le robot à marqué
+    
+    // Switch-like logic for different commands
+    if (command == ESSAI) {
+        // Case: ESSAI (POINT5 5)
         println("ESSAI MARQUE!");
-
+    } else if (command == BALLON1) {
+        // Case: BALLON1 (Ballon 1)
+        println("Ballon attrape!");
     } else {
+        // Default case: read response
         String response = "";
         while (_serial->available() > 0) {
             char c = (char)_serial->read();

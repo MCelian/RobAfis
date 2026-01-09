@@ -12,6 +12,7 @@ public:
     char readCommand();
     String writeCommand(const String& command);
     static const String ESSAI;
+    static const String BALLON1;
 
 private:
     HardwareSerial* _serial;
