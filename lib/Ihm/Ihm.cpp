@@ -1,6 +1,10 @@
 #include "Ihm.h"
 #include "Arduino.h"
 
+// IHM command constants
+const char* Ihm::ESSAI = "POINT5 5";
+const char* Ihm::BALLON1 = "Ballon 1";
+
 Ihm::Ihm(HardwareSerial* s) : _serial(s), _last_command_received('\0') {}
 
 void Ihm::initialize() {

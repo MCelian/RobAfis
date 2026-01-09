@@ -11,8 +11,8 @@ public:
     void println(const String& msg);
     char readCommand();
     String writeCommand(const String& command);
-    static const String ESSAI;
-    static const String BALLON1;
+    static const char* ESSAI;
+    static const char* BALLON1;
 
 private:
     HardwareSerial* _serial;
