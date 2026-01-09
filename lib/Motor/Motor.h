@@ -10,7 +10,7 @@ public:
     int getInterruptionNumber() { return _encoder.getIntNum(); }
     int getPulsePosition() { return _encoder.getCurPos() - _positionOffset; }
     int getRawPulsePosition() { return _encoder.getPulsePos(); }
-    float getGearRatio() { return _encoder.getRatio(); }
+    float getGearRatio() { return 39.267f; }
 
     int getPortB() { return _encoder.getPortB(); }
 
