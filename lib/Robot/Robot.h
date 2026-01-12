@@ -15,7 +15,7 @@ void initializeComponent(RobotComponent* robotComponent) {
 
 template <typename Sensor>
 int getSensorData(Sensor* sensor) {
-    sensor->getSensorData();
+    sensor->getData();
 }
 
 class Robot {
@@ -84,24 +84,16 @@ public:
         _lineDetectedCount = 0;
     }
 
-    int getDistanceData() {
-        return _ultrasonicSensor->getDistance();
-    }
-
-    int getLineSensorData() {
-        return _lineFollowerSensor->readSensors();
-    }
-
-    bool isLineDetectedData() {
-        return _lineFollowerSensor->isLineDetected();
-    }
-
     String getColorName() {
         _colorSensor->getColor();
         return _colorSensor->getCurrentColorName();
     }
 
     void getRobotData();
+
+    bool isObjectDetected() {
+        // return getDistance() < _detectionThresholdCm;
+    }
 private:
     Chassis* _chassis = nullptr;
     Arm* _arm = nullptr;

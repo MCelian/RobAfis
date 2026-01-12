@@ -10,12 +10,13 @@
 
 class LineFollowerSensor {
 public:
-    LineFollowerSensor(int port);
-    int readSensors();
-    bool isLineDetected();
-    bool isLineDetectedLeft();
-    bool isLineDetectedRight();
-    bool isLineNotDetected();
+    LineFollowerSensor(int port) {
+        _sensor = new MeLineFollower(port);
+    }
+
+    int getData() {
+        _sensor->readSensors();
+    }
 private:
     MeLineFollower* _sensor;
 };
