@@ -5,11 +5,38 @@
 
 class Claw {
 public:
-    Claw(int port) { _motor = new MeMegaPiDCMotor(port); };
-    ~Claw() { delete _motor; }
-    void open() { _motor->run(-100); }
-    void close() { _motor->run(100); }
-    void stop() { _motor->stop(); }
+    Claw(int port) {
+        _motor = new MeMegaPiDCMotor(port);
+        stop();
+    };
+
+    ~Claw() {
+        delete _motor;
+    }
+
+    void openDuringMs(int durationMs) {
+        _motor->run(-100);
+        delay(durationMs);
+        stop();
+    }
+
+    void closeDuringMs(int durationMs) {
+        _motor->run(100);
+        delay(durationMs);
+        stop();
+    }
+
+    void openUntilLimit() {
+        openDuringMs(6000);
+    }
+
+    void closeUntilLimit() {
+        closeDuringMs(6000);
+    }
+
+    void stop() {
+        _motor->stop();
+    }
 private:
     MeMegaPiDCMotor* _motor;
 };

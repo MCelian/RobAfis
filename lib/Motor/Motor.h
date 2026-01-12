@@ -5,35 +5,29 @@
 
 class Motor {
 public:
-    Motor(int port);
+    Motor(int port, void (*isr_callback)(void), float additionnalRatio = 1.0, double pidP = 18.0, double pidI = 0, double pidD = 6.0);
+    
+    // Public method to be called BY the ISR
+    void handleInterrupt(); 
 
-    int getInterruptionNumber() { return _encoder.getIntNum(); }
-    int getPulsePosition() { return _encoder.getCurPos() - _positionOffset; }
-    int getRawPulsePosition() { return _encoder.getPulsePos(); }
-    float getGearRatio() { return 39.267f; }
-
-    int getPortB() { return _encoder.getPortB(); }
-
-    void setCurrentPosition(int position) { _positionOffset = _encoder.getCurPos() - position; }
-    void setPwm(int pwm) { _encoder.setMotorPwm(pwm); }
-    void setPulse(int pulseCount) { _encoder.setPulse(pulseCount); _pulsePerDisc = pulseCount; }
-
-    void setGearRatio(float ratio) { _encoder.setRatio(ratio); }
-
-    void pulsePositionIncrement() { _encoder.pulsePosPlus(); }
-    void pulsePositionDecrement() { _encoder.pulsePosMinus(); }
-    void stop() { _encoder.setMotorPwm(0); }
-    void updateEncoderValue() { _encoder.loop(); }
-
-    bool checkAndStopIfBlocked(int noMoveThreshold);
-    int pulsesToDegrees(int pulses);
+    // Your movement methods
+    void setCurrentPositionAsZero() { _encoder.setPulsePos(0); }
+    long moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned long timeoutMs, bool (*stopCondition)() = nullptr);
+    void moveToPosition(long targetPos, int speed = 100);
+    long getPulsePos() { return _encoder.getPulsePos(); }
 
 private:
     MeEncoderOnBoard _encoder;
-    int _pulsePerDisc;
-    int _positionOffset;
-    int _lastRawPulse;
-    int _noPulseCounter;
+    int _port;
+
+    // Static pointer needed for the ISR
+    static Motor* instance;
+
+    // 2. The static "Trampoline" function for attachInterrupt
+    static void executeISR();
+
+    // 3. The actual logic function (Member function)
+    void updatePulse();
 };
 
 #endif

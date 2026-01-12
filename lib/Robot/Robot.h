@@ -12,39 +12,118 @@ class Robot {
 public:
     Robot();
     ~Robot();
-    void setChassis(Chassis* chassis) { delete _chassis; _chassis = chassis; };
-    void setArm(Arm* arm) { delete _arm; _arm = arm; };
-    void setClaw(Claw* claw) { delete _claw; _claw = claw; }
-    void setUltrasonicSensor(UltrasonicSensor* sensor) { delete _ultrasonicSensor; _ultrasonicSensor = sensor; }
-    void setLineFollowerSensor(LineFollowerSensor* sensor) { delete _lineFollowerSensor; _lineFollowerSensor = sensor; }
-    void setColorSensor(ColorSensor* sensor) { delete _colorSensor; _colorSensor = sensor; }
-    void initializeChassis() { _chassis->findSteeringLimits(); }
-    void initializeArm() { _arm->initialize(); }
-    void initializeClaw() { _claw->stop(); _claw->close(); delay(5000); _claw->stop(); }
-    void initializeUltrasonicSensor() { _ultrasonicSensor->initialize(); }
-    void initializeColorSensor() { _colorSensor->initialize(); }
+    void setChassis(Chassis* chassis) {
+        delete _chassis;
+        _chassis = chassis;
+    }
+
+    void setArm(Arm* arm) {
+        delete _arm;
+        _arm = arm;
+    }
+
+    void setClaw(Claw* claw) {
+        delete _claw;
+        _claw = claw;
+    }
+
+    void setUltrasonicSensor(UltrasonicSensor* sensor) {
+        if (_ultrasonicSensor != nullptr) {
+            delete _ultrasonicSensor;
+        }
+
+        _ultrasonicSensor = sensor;
+
+        _staticSensor = sensor;
+    }
+
+    void setLineFollowerSensor(LineFollowerSensor* sensor) {
+        delete _lineFollowerSensor;
+        _lineFollowerSensor = sensor;
+    }
+
+    void setColorSensor(ColorSensor* sensor) {
+        delete _colorSensor;
+        _colorSensor = sensor;
+    }
+
+    void advanceForwardUntilObstacle();
+    void openClawDuringM(int durationMs);
+    void closeClawDuringMs(int durationMs);
+
+    void moveArmToGrabPosition();
+    void moveArmToNeutralPosition();
+
+    void advanceFowardUntilPointZone();
+
+    void initializeChassis() {
+        _chassis->initialize();
+    }
+
+    void initializeArm() {
+        _arm->initialize();
+    }
+
+    void initializeClaw() {
+        _claw->closeUntilLimit();
+    }
+
+    void initializeUltrasonicSensor() {
+        _ultrasonicSensor->initialize();
+    }
+
+    void initializeColorSensor() {
+        _colorSensor->initialize();
+    }
+
     void doScenarioAutoTest();
     void doScenarioTry();
     void doScenarioConversion();
     void doEmergencyStop();
 
-    void lineDetectedCountIncrement() { _lineDetectedCount++; }
-    void lineDetectedCountDecrement() { _lineDetectedCount--; }
-    void lineDetectedCountReset() { _lineDetectedCount = 0; }
+    void lineDetectedCountIncrement() {
+        _lineDetectedCount++;
+    }
 
-    int getColorData() { return _colorSensor->getColor(); }
-    int getDistanceData() { return _ultrasonicSensor->getDistance(); }
-    int getLineSensorData() { return _lineFollowerSensor->readSensors(); }
-    bool isLineDetectedData() { return _lineFollowerSensor->isLineDetected(); }
-    String getColorName() { return _colorSensor->getCurrentColorName(); }
+    void lineDetectedCountDecrement() {
+        _lineDetectedCount--;
+    }
+
+    void lineDetectedCountReset() {
+        _lineDetectedCount = 0;
+    }
+
+    int getColorData() {
+        return _colorSensor->getColor();
+    }
+
+    int getDistanceData() {
+        return _ultrasonicSensor->getDistance();
+    }
+
+    int getLineSensorData() {
+        return _lineFollowerSensor->readSensors();
+    }
+
+    bool isLineDetectedData() {
+        return _lineFollowerSensor->isLineDetected();
+    }
+
+    String getColorName() {
+        _colorSensor->getColor();
+        return _colorSensor->getCurrentColorName();
+    }
+
     void getRobotData();
 private:
-    Chassis* _chassis;
-    Arm* _arm;
-    Claw* _claw;
-    UltrasonicSensor* _ultrasonicSensor;
-    LineFollowerSensor* _lineFollowerSensor;
-    ColorSensor* _colorSensor;
+    Chassis* _chassis = nullptr;
+    Arm* _arm = nullptr;
+    Claw* _claw = nullptr;
+    UltrasonicSensor* _ultrasonicSensor = nullptr;
+    static UltrasonicSensor* _staticSensor;
+    static bool checkObstacle();
+    LineFollowerSensor* _lineFollowerSensor = nullptr;
+    ColorSensor* _colorSensor = nullptr;
     int _lineDetectedCount = 0;
 
     void pivotLookLeft();

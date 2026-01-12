@@ -1,125 +1,56 @@
 #include "Chassis.h"
-#include "Arduino.h"
 
-Motor* tempMotor = nullptr;
-static void updatePulseCount() {
-    if (!tempMotor) return;
-    if (digitalRead(tempMotor->getPortB()) == 0) {
-        tempMotor->pulsePositionDecrement();
-    } else {
-        tempMotor->pulsePositionIncrement();
+Chassis::Chassis(Motor* motorAdvance, Motor* motorSteering) {
+    _motorAdvance = motorAdvance;
+    _motorSteering = motorSteering;
+}
+
+void Chassis::initialize() {
+    // Now this check is safe
+    if (_motorSteering == nullptr || _motorAdvance == nullptr) {
+        Serial.println("ERROR: Motors not linked!");
+        return;
     }
+
+    Serial.println("--- STARTING ---");
+
+    Serial.println("Finding Right Limit...");
+    _motorSteering->moveUntilStall(150, 1, 10000);
+    _motorSteering->setCurrentPositionAsZero(); // This is now 0 (Right Limit)
+
+    // 2. Move LEFT
+    Serial.println("Finding Left Limit...");
+    long totalWidthRaw = _motorSteering->moveUntilStall(-150, 5, 10000);
+
+    // Setup PID for the final move
+    long halfWidth = totalWidthRaw / 2;
+    _motorSteering->moveToPosition(halfWidth, 150);
+
+    // Final Zeroing
+    _motorSteering->setCurrentPositionAsZero();
+    _motorSteering->moveToPosition(0, 0);
+
+    long range = abs(totalWidthRaw / 2);
+
+    _steerRightLimit = range;
+    _steerLeftLimit = -range;
+
+    Serial.print("New Left Limit: "); Serial.println(_steerLeftLimit);
+    Serial.print("New Right Limit: "); Serial.println(_steerRightLimit);
+
+    Serial.println("PERFECT ZERO!");
+
+    _isInitialized = true;
 }
 
-Chassis::Chassis(int portAdvance, int portSteering) {
-    _motorAdvance = new Motor(portAdvance);
-    _motorSteering = new Motor(portSteering);
-    float currentRatio = _motorSteering->getGearRatio();
-    float newRatio = currentRatio * GEAR_MULTIPLIER;
-    _motorSteering->setGearRatio((int)(newRatio + 0.5f));
-
-    _steerLeftLimit = 0;
-    _steerRightLimit = 0;
-}
-// pwm negative -> left
-void Chassis::steerToPosition(int position) {
-    int pwmSign = (position - _motorSteering->getPulsePosition()) >= 0 ? +1 : -1;
-
-    int noMoveCount = 0;
-    _motorSteering->updateEncoderValue();
-
-    int lastPos = _motorSteering->getPulsePosition();
-
-    tempMotor = _motorSteering;
-    attachInterrupt(_motorSteering->getInterruptionNumber(), updatePulseCount, RISING);
-    _motorSteering->setPwm(pwmSign * FIND_PWM);
-
-    while (noMoveCount < NO_MOVE_THRESHOLD && abs(position - lastPos) >= MARGIN_STEER_POSITION) {
-        _motorSteering->updateEncoderValue();
-        delay(SAMPLE_MS);
-        long pos = _motorSteering->getPulsePosition();
-        int delta = abs(pos - lastPos);
-
-        if (delta <= MARGIN_STEER_POSITION) {
-            noMoveCount++;
-        } else {
-            noMoveCount = 0;
-            lastPos = pos;
-        }
-    }
-    _motorSteering->stop();
-    detachInterrupt(_motorSteering->getInterruptionNumber());
-    tempMotor = nullptr;
-
-    delay(50);
-};
-
-void Chassis::findSteeringLimits() {
-    steerUntilStop(-1);
-
-    setSteerLeftLimit(_motorSteering->getRawPulsePosition());
-
-    int leftWheelDeg = _motorSteering->pulsesToDegrees(getSteerLeftLimit());
-
-    delay(150);
-
-    steerUntilStop(+1);
-    setSteerRightLimit(_motorSteering->getPulsePosition());
-
-    int rightWheelDeg = _motorSteering->pulsesToDegrees(_motorSteering->getRawPulsePosition());
-
-    Serial.print("Left limit Degrees"); Serial.println(getSteerLeftLimit());
-    Serial.print("Right limit Degrees"); Serial.println(getSteerRightLimit());
-
-    int centerWheelDeg = (leftWheelDeg + rightWheelDeg) / 2;
-    setCenterWheelDeg(centerWheelDeg);
-    Serial.print("Center limit Degrees"); Serial.println(getCenterWheelDeg());
-    
-    float centerOffset = getCenterWheelDeg() - getCurrentWheelDeg();
-    float newCenterPos = getCurrentPosition() + centerOffset;
-    
-    setCenterPosition(centerWheelDeg);
-
-    steerCenter();
-    _motorSteering->stop();
+void Chassis::pivotLookLeft() {
+    // To point NOSE Left, we must steer RIGHT and reverse
+    steerToLeftLimit();
+    advanceBackwardDuringMs(600);
 }
 
-void Chassis::steerUntilStop(int pwmSign) {
-    steerToPosition(pwmSign * 9999);
-    setCurrentRaw(_motorSteering->getRawPulsePosition());
-    setCurrentWheelDeg(_motorSteering->pulsesToDegrees(getCurrentRaw()));
-}
-
-void Chassis::steerLeft() {
-    steerToPosition(getSteerLeftLimit() + 15);
-}
-
-void Chassis::steerRight() {
-    steerToPosition(getSteerRightLimit() - 15);
-}
-
-void Chassis::steerCenter() {
-    steerToPosition(getCenterPosition());
-}
-
-void Chassis::advanceForward() {
-    _motorAdvance->setPwm(-ADVANCE_SPEED);
-}
-
-void Chassis::advanceBackward() {
-    _motorAdvance->setPwm(ADVANCE_SPEED);
-}
-
-void Chassis::advanceStop() {
-    _motorAdvance->setPwm(0);
-}
-
-void Chassis::waitAndKeepAlive(unsigned long ms) {
-    unsigned long start = millis();
-    while (millis() - start < ms) {
-        // Keep the PID loops alive!
-        _motorAdvance->updateEncoderValue();
-        _motorSteering->updateEncoderValue();
-        delay(5); // Short delay to save CPU
-    }
+void Chassis::pivotLookRight() {
+    // To point NOSE Right, we must steer LEFT and reverse
+    steerToLeftLimit();
+    advanceBackwardDuringMs(600);
 }

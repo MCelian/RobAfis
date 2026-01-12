@@ -1,5 +1,17 @@
 #include "RobotBuilder.h"
 
+void isrMotorAdvance();
+void isrMotorSteering();
+void isrMotorArm();
+
+Motor objMotorAdvance(1, isrMotorAdvance, 56 / 8, 40.0, 1.5, 12.0);
+Motor objMotorSteering(2, isrMotorSteering, 72 / 8, 18.0, 0.0, 9.0) ;
+Motor objMotorArm(3, isrMotorArm, 56 / 8, 40.0, 1.5, 12.0);
+
+void isrMotorAdvance() { objMotorAdvance.handleInterrupt(); }
+void isrMotorSteering() { objMotorSteering.handleInterrupt(); }
+void isrMotorArm() { objMotorArm.handleInterrupt(); }
+
 RobotBuilder::RobotBuilder() {
     _robot = nullptr;
     reset();
@@ -25,16 +37,17 @@ Robot* RobotBuilder::getResult() {
     return temp;
 }
 
-void RobotBuilder::addChassis(int portAdvance, int portSteering) {
-    _robot->setChassis(new Chassis(portAdvance, portSteering));
+
+void RobotBuilder::addChassis() {
+    _robot->setChassis(new Chassis(&objMotorAdvance, &objMotorSteering));
 }
 
-void RobotBuilder::addArm(int port) {
-    _robot->setArm(new Arm(port));
+void RobotBuilder::addArm() {
+    _robot->setArm(new Arm(&objMotorArm));
 }
 
-void RobotBuilder::addClaw(int port) {
-    _robot->setClaw(new Claw(port));
+void RobotBuilder::addClaw() {
+    _robot->setClaw(new Claw(12));
 }
 
 void RobotBuilder::addUltrasonicSensor(int port) {

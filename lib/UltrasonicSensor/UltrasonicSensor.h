@@ -9,7 +9,7 @@ public:
     void initialize() { while (getDistance() == 0 || getDistance() == 400) { getDistance(); } };
     int setDetectionThreshold(int thresholdCm);
     int getDistance();
-    boolean isObjectDetected();
+    bool isObjectDetected();
 private:
     MeUltrasonicSensor* _sensor;
     int _detectionThresholdCm;

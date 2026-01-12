@@ -11,6 +11,7 @@ public:
     ~RobotFactory();
 
     static Robot* createRugbyRobot();
+    static Robot* createChassisRobot();
 };
 
 #endif

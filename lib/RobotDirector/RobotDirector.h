@@ -8,7 +8,8 @@ public:
     RobotDirector(RobotBuilder* builder);
     ~RobotDirector();
 
-    void buildFullRugbyRobot(int portAdvance, int portSteering, int portArm, int portClaw, int portUltrasonicSensor, int portLineFollowerSensor,  int portColorSensor);
+    void buildFullRugbyRobot(int portUltrasonicSensor, int portLineFollowerSensor,  int portColorSensor);
+    void createChassisRobot();
 private:
     RobotBuilder* _builder;
 };

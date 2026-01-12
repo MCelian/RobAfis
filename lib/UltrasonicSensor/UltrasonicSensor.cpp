@@ -21,7 +21,6 @@ int UltrasonicSensor::getDistance() {
             sum += dist;
             attempts++;
         }
-        delay(50);
     }
     if (attempts > 0) {
         _lastValid = (sum + 2) / (attempts);
@@ -29,6 +28,6 @@ int UltrasonicSensor::getDistance() {
     return _lastValid;
 }
 
-boolean UltrasonicSensor::isObjectDetected() {
+bool UltrasonicSensor::isObjectDetected() {
     return getDistance() < _detectionThresholdCm;
 }

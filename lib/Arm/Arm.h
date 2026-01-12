@@ -8,21 +8,27 @@
 
 class Arm {
 public:
-    Arm(int port) { _motor = new Motor(port); }
-    void raise() { _motor->setPwm(SPEED); }
-    void lower() { _motor->setPwm(-SPEED); }
-    void stop() { _motor->setPwm(0); };
+    Arm(Motor* motor);
     void initialize();
-    void moveToGrabPosition();
+
+    void turnPositive(bool (*stopCondition)() = nullptr) {
+        _motor->moveUntilStall(200, 100, 10000, stopCondition);
+    };
+
+    void turnNegative(bool (*stopCondition)() = nullptr) {
+        _motor->moveUntilStall(-100, 100, 10000, stopCondition);
+    };
+
+    void stop() {
+        _motor->moveUntilStall(0, 100, 10000);
+    };
+
+    void moveToGrabPosition() {}
 private:
     Motor* _motor;
-    int _steerLeftLimit;
-    int _steerRightLimit;
-    int _centerWheelDeg = 0;
-    int _currentRaw = 0;
-    int _currentWheelDeg = 0;
-    int _currentPostion = 0;
-    int _centerPosition = 0;
+    int _steerNegativeLimit;
+    int _steerPositiveLimit;
+    int _grabPosition;
 };
 
 #endif

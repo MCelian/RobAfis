@@ -2,61 +2,48 @@
 #define CHASSIS_H
 
 #include "Motor.h"
-#define FIND_PWM 100
-#define SAMPLE_MS 100
-#define NO_MOVE_THRESHOLD 5
-#define MARGIN_STEER_POSITION 5
-#define GEAR_MULTIPLIER 72.0f / 8.0f
-
-#define ADVANCE_SPEED 200
 
 class Chassis {
 public:
-    Chassis(int portAdvance, int portSteering);
-    void findSteeringLimits();
-    void steerLeft();
-    void steerRight();
-    void steerCenter();
-    void advanceForward();
-    void advanceBackward();
-    void advanceStop();
+    Chassis(Motor* motorAdvance, Motor* motorSteering);
+    void initialize();
+    void steerToLeftLimit() {
+        _motorSteering->moveToPosition(_steerLeftLimit, 0);
+    }
 
-    int getSteerLeftLimit() const { return _steerLeftLimit; }
-    void setSteerLeftLimit(int steerLeftLimit) { _steerLeftLimit = steerLeftLimit; }
+    void steerToRightLimit() {
+        _motorSteering->moveToPosition(_steerRightLimit, 0);
+    }
 
-    int getSteerRightLimit() const { return _steerRightLimit; }
-    void setSteerRightLimit(int steerRightLimit) { _steerRightLimit = steerRightLimit; }
+    void steerToCenter() {
+        _motorSteering->moveToPosition(0, 0);
+    };
 
-    int getCenterPosition() const { return _centerPosition; }
-    void setCenterPosition(int centerPosition) { _centerPosition = centerPosition; }
+    void steerToAngle(int angle) {
+        _motorSteering->moveToPosition(angle, 0);
+    };
 
-    int getCenterWheelDeg() const { return _centerWheelDeg; }
-    void setCenterWheelDeg(int centerWheelDeg) { _centerWheelDeg = centerWheelDeg; }
+    void advanceForwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
+        _motorAdvance->moveUntilStall(100, 100, durationMs, stopCondition);
+    };
 
-    int getCurrentRaw() const { return _currentRaw; }
-    void setCurrentRaw(int currentRaw) { _currentRaw = currentRaw; }
+    void advanceBackwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
+        _motorAdvance->moveUntilStall(-100, 100, durationMs, stopCondition);
+    };
 
-    int getCurrentWheelDeg() const { return _currentWheelDeg; }
-    void setCurrentWheelDeg(int currentWheelDeg) { _currentWheelDeg = currentWheelDeg; }
+    void advanceStop() {
+        _motorAdvance->moveUntilStall(0, 100, 10000);
+    };
 
-    int getCurrentPosition() const { return _currentPostion; }
-    void setCurrentPosition(int currentPostion) { _currentPostion = currentPostion; }
+    void pivotLookLeft();
 
-    void waitAndKeepAlive(unsigned long ms);
-
-    void steerUntilStop(int pwmSign);
-
-    void steerToPosition(int position);
-    
+    void pivotLookRight();
 private:
-    Motor* _motorAdvance;
-    Motor* _motorSteering;
-    int _steerLeftLimit;
-    int _steerRightLimit;
-    int _centerWheelDeg = 0;
-    int _currentRaw = 0;
-    int _currentWheelDeg = 0;
-    int _currentPostion = 0;
+    Motor* _motorAdvance = nullptr;
+    Motor* _motorSteering = nullptr;
+    int _isInitialized = false;
+    int _steerLeftLimit = 0;
+    int _steerRightLimit = 0;
     int _centerPosition = 0;
 };
 

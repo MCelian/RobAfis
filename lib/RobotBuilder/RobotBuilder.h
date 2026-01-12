@@ -13,9 +13,9 @@ public:
     void reset();
     Robot* getResult();
 
-    void addChassis(int drivePort, int steerPort);
-    void addArm(int port);
-    void addClaw(int port);
+    void addChassis();
+    void addArm();
+    void addClaw();
     void addUltrasonicSensor(int port);
     void addLineFollowerSensor(int port);
     void addColorSensor(int port);
