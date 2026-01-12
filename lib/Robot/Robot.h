@@ -13,11 +13,6 @@ void initializeComponent(RobotComponent* robotComponent) {
     robotComponent->initialize();
 }
 
-template <typename Sensor>
-int getSensorData(Sensor* sensor) {
-    sensor->getData();
-}
-
 class Robot {
 public:
     Robot();
@@ -58,7 +53,10 @@ public:
     }
     
     void initialize() {
+        initializeComponent(_ultrasonicSensor);
+        //initializeComponent(_claw);
         initializeComponent(_arm);
+        //initializeComponent(_chassis);
     }
 
     void advanceForwardUntilObstacle();
@@ -72,28 +70,7 @@ public:
 
     void doEmergencyStop();
 
-    void lineDetectedCountIncrement() {
-        _lineDetectedCount++;
-    }
-
-    void lineDetectedCountDecrement() {
-        _lineDetectedCount--;
-    }
-
-    void lineDetectedCountReset() {
-        _lineDetectedCount = 0;
-    }
-
-    String getColorName() {
-        _colorSensor->getColor();
-        return _colorSensor->getCurrentColorName();
-    }
-
-    void getRobotData();
-
-    bool isObjectDetected() {
-        // return getDistance() < _detectionThresholdCm;
-    }
+    String getSensorDataToString();
 private:
     Chassis* _chassis = nullptr;
     Arm* _arm = nullptr;

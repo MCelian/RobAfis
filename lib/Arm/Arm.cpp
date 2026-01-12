@@ -1,13 +1,5 @@
 #include "Arm.h"
 
-Arm::Arm(Motor* motor) {
-    _motor = motor;
-}
-
-void Arm::initialize() {
-    turnPositive();
-};
-
 // void Arm::moveToGrabPosition() {
 //     int position = -9999;
 //     int noMoveCount = 0;
@@ -42,26 +34,3 @@ void Arm::initialize() {
 //     detachInterrupt(_motor->getInterruptionNumber());
 //     tempMotorArm = nullptr;
 // }
-// // void Arm::raise() {
-// //     _motor->set_analogic_speed(MAX_SPEED);
-// // }
-
-// // void Arm::lower() {
-// //     _motor->set_analogic_speed(-MAX_SPEED);
-// // }
-
-// // void Arm::stop() {
-// //     _motor->set_analogic_speed(0);
-// // }
-
-// // void Arm::close_claw() {
-// //     _motor_claw->set_analogic_speed(MAX_SPEED);
-// // }
-
-// // void Arm::open_claw() {
-// //     _motor_claw->set_analogic_speed(-MAX_SPEED);
-// // }
-
-// // void Arm::stop_claw() {
-// //     _motor_claw->set_analogic_speed(0);
-// // }

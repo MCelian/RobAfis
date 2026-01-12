@@ -8,19 +8,25 @@
 
 class Arm {
 public:
-    Arm(Motor* motor);
-    void initialize();
+    Arm(Motor* motor) {
+        _motor = motor;
+    }
 
-    void turnPositive(bool (*stopCondition)() = nullptr) {
-        _motor->moveUntilStall(200, 100, 10000, stopCondition);
+    void initialize() {
+        Serial.println("START");
+        _motor->moveUntilStall(250, 5, 2000);
     };
 
-    void turnNegative(bool (*stopCondition)() = nullptr) {
-        _motor->moveUntilStall(-100, 100, 10000, stopCondition);
+    void turnPositiveDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
+        _motor->moveUntilStall(200, 5, durationMs, stopCondition);
+    };
+
+    void turnNegativeDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
+        _motor->moveUntilStall(-200, 5, durationMs, stopCondition);
     };
 
     void stop() {
-        _motor->moveUntilStall(0, 100, 10000);
+        _motor->moveUntilStall(0, 0, 500);
     };
 
     void moveToGrabPosition() {}

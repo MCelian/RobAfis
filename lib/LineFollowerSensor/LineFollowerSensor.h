@@ -14,11 +14,44 @@ public:
         _sensor = new MeLineFollower(port);
     }
 
-    int getData() {
-        _sensor->readSensors();
+        bool isLineDetected() {
+        return readSensors() != 0;
+    }
+
+    bool isLineDetectedLeft() {
+        return readSensors() != 1;
+    }
+
+    bool isLineDetectedRight() {
+        return readSensors() == 2;
+    }
+
+    bool isLineNotDetected() {
+        return readSensors() == 3;
+    }
+
+    void lineDetectedCountIncrement() {
+        _lineDetectedCount++;
+    }
+
+    void lineDetectedCountDecrement() {
+        _lineDetectedCount--;
+    }
+
+    void lineDetectedCountReset() {
+        _lineDetectedCount = 0;
+    }
+
+    int getLineDetectedCount() {
+        return _lineDetectedCount;
     }
 private:
     MeLineFollower* _sensor;
+    int _lineDetectedCount = 0;
+
+    int readSensors() {
+        return _sensor->readSensors();
+    }
 };
 
 #endif

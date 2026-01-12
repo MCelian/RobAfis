@@ -6,39 +6,51 @@
 
 class ColorSensor {
 public:
-    ColorSensor(int port) { _sensor = new MeColorSensor(port); };
-    void initialize() { _sensor->TurnOnmodule(); _sensor->SensorInit(); }
-    int getColor() { return _sensor->ColorIdentify(); }
+    static int const WHITE  = 0;
+    static int const PINKE  = 1;
+    static int const RED    = 2;
+    static int const ORANGE = 3;
+    static int const YELLOW = 4;
+    static int const GREEN  = 5;
+    static int const CYAN   = 6;
+    static int const BLUE   = 7;
+    static int const PURPLE = 8;
+    static int const BLACK  = 9;
+    static int const GOLD   = 10;
+
+    ColorSensor(int port) {
+        _sensor = new MeColorSensor(port);
+    }
+
+    void initialize() {
+        _sensor->TurnOnmodule(); _sensor->SensorInit();
+    }
+
+    int getColor() {
+        return _sensor->ColorIdentify();
+    }
+
     String getColorName(int colorValue) {
         switch(colorValue) {
-            case 0:  return "BLANC";
-            case 1:  return "ROSE";
-            case 2:  return "ROUGE";
-            case 3:  return "ORANGE";
-            case 4:  return "JAUNE";
-            case 5:  return "VERT";
-            case 6:  return "CYAN";
-            case 7:  return "BLEU";
-            case 8:  return "VIOLET";
-            case 9:  return "NOIR";
-            case 10: return "OR";
+            case WHITE:  return "BLANC";
+            case PINKE:  return "ROSE";
+            case RED:    return "ROUGE";
+            case ORANGE: return "ORANGE";
+            case YELLOW: return "JAUNE";
+            case GREEN:  return "VERT";
+            case CYAN:   return "CYAN";
+            case BLUE:   return "BLEU";
+            case PURPLE: return "VIOLET";
+            case BLACK:  return "NOIR";
+            case GOLD:   return "OR";
             default: return "INCONNU";
         }
     }
+    
     String getCurrentColorName() {
+        getColor();
         return getColorName(getColor());
     }
-    int WHITE  = 0;
-    int PINKE  = 1;
-    int RED    = 2;
-    int ORANGE = 3;
-    int YELLOW = 4;
-    int GREEN  = 5;
-    int CYAN   = 6;
-    int BLUE   = 7;
-    int PURPLE = 8;
-    int BLACK  = 9;
-    int GOLD   = 10;
 private:
     MeColorSensor* _sensor;
 };

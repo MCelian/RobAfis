@@ -16,14 +16,10 @@ void setup() {
   ihm->initialize();
   
   robot = RobotFactory::createRugbyRobot();
-  //robot->initializeChassis();
-  //robot->initializeClaw();
   robot->initialize();
-  //robot->initializeUltrasonicSensor();
-  //robot->initializeColorSensor();
-  //robot->doScenarioAutoTest();
 
   ihmRobotFacade = new IhmRobotFacade(ihm, robot);
+  ihmRobotFacade->test();
 }
 
 void loop() {

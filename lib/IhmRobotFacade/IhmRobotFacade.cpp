@@ -65,26 +65,10 @@ void IhmRobotFacade::executeIhmCommand(int command) {
         break;
 
         default:
-        break;
+            return;
     }
 }
 
 void IhmRobotFacade::sendRobotDataToIhm() {
-    String colorName = _robot->getColorName();
-    int distance = _robot->getDistanceData();
-    int lineSensorState = _robot->getLineSensorData();
-    bool isLineDetected = _robot->isLineDetectedData();
-    
-    String data = "-----------------------\n";
-    data += "SENSOR_DATA\n";
-    data += "-----------------------\n";
-    data += "Color: " + colorName + "\n";
-    data += "Distance: " + String(distance) + " cm\n";
-    data += "LineSensor: " + String(lineSensorState) + "\n";
-    data += "LineDetected: " + String(isLineDetected ? "OUI" : "NON");
-    data += "\n";
-    data += "-----------------------\n";
-    data += "\n";
-    
-    _ihm->println(data);
+    _ihm->println(_robot->getSensorDataToString());
 }

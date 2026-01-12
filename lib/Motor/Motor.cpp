@@ -7,7 +7,6 @@ Motor::Motor(int port, void (*isrCallback)(void), float additionnalRatio, double
     attachInterrupt(_encoder.getIntNum(), isrCallback, RISING);
     additionnalRatio == 1.0 ? _encoder.setRatio(39.267) : _encoder.setRatio(39.267 * additionnalRatio);
     _encoder.setPosPid(pidP, pidI, pidD);
-    // _encoder.setPosPid(18.0, 0, 6.0);
 }
 
 void Motor::handleInterrupt() {
@@ -26,7 +25,7 @@ long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned lo
     long lastPulsePosition = _encoder.getPulsePos();
 
     _encoder.setMotorPwm(-255);
-    delay(20000);
+
     // Motor Startup Delay
     while(millis() - startTime < 500) {
         _encoder.loop();
@@ -50,10 +49,6 @@ long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned lo
             long currentPulsePosition = _encoder.getPulsePos();
             long currentPulsesPerSampleTime = abs(currentPulsePosition - lastPulsePosition);
             
-            // Debug prints (Optional)
-            // Serial.print("Current: "); Serial.print(currentPulsePosition);
-            // Serial.print(" | Delta: "); Serial.println(currentPulsesPerSampleTime);
-
             if (currentPulsesPerSampleTime < minPulsesPerSampleTime) {
                 Serial.println("STALL DETECTED! (Pulses stopped changing)");
                 _encoder.setMotorPwm(0);

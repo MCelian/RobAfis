@@ -5,22 +5,28 @@
 
 class UltrasonicSensor {
 public:
-    UltrasonicSensor(int port) : _detectionThresholdCm(19), _lastValid(0) {
+    UltrasonicSensor(int port) {
         _sensor = new MeUltrasonicSensor(port);
     };
     
     void initialize() {
-        //while (getDistance() == 0 || getDistance() == 400) { getDistance(); }
+        getDistance();
     }
 
-    int getData() {
-        return _sensor->distanceCm();
+    int getDistance() {
+        int distance = _sensor->distanceCm();
+        _lastValid = distance < 400 && distance > 0 ? distance : _lastValid;
+        return _lastValid;
     }
-    
+
+    bool isObjectDetected() {
+        int distance = getDistance();
+        return distance > 0 && distance < _detectionThresholdCm;
+    }
 private:
     MeUltrasonicSensor* _sensor;
-    int _detectionThresholdCm;
-    int _lastValid;
+    int _detectionThresholdCm = 19;
+    int _lastValid = 400;
 };
 
 #endif

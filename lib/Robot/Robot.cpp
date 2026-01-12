@@ -55,6 +55,24 @@ void Robot::advanceFowardUntilPointZone() {
     _arm->moveToGrabPosition();
 }
 
+String Robot::getSensorDataToString() {
+    String colorName = _colorSensor->getCurrentColorName();
+    int distance = _ultrasonicSensor->getDistance();
+    bool isLineDetectedLeft = _lineFollowerSensor->isLineDetectedLeft();
+    bool isLineDetectedRight = _lineFollowerSensor->isLineDetectedRight();
+    bool isLineDetected = isLineDetectedLeft || isLineDetectedRight;
+    // 
+    String data = "-----------------------\n";
+    data += "SENSOR_DATA\n";
+    data += "-----------------------\n";
+    data += "Color: " + colorName + "\n";
+    data += "Ultrasound Distance: " + String(distance) + " cm\n";
+    data += "Is Line LEFT Detected: " + String(isLineDetectedLeft ? "OUI" : "NON") + "\n";
+    data += "Is Line RIGHT Detected: " + String(isLineDetectedRight ? "OUI" : "NON") + "\n";
+    data += "Is Line Detected: " + String(isLineDetected ? "OUI" : "NON") + "\n";
+    data += "-----------------------\n";
+    data += "\n";
+}
 // void Robot::doScenarioTry() {
 //     Serial.println("doScenarioTry: START");
 //     // ---------------------------------------------------------
@@ -184,33 +202,33 @@ void Robot::advanceFowardUntilPointZone() {
 
 // }
 
-void Robot::getRobotData() {
-    // Get Color data from the color sensor
-    int color = _colorSensor->getColor();
-    String colorName = _colorSensor->getCurrentColorName();
+// void Robot::getRobotData() {
+//     // Get Color data from the color sensor
+//     int color = _colorSensor->getColor();
+//     String colorName = _colorSensor->getCurrentColorName();
     
-    // Get Distance data from the ultrasonic sensor
-    int distance = _ultrasonicSensor->getDistance();
+//     // Get Distance data from the ultrasonic sensor
+//     int distance = _ultrasonicSensor->getDistance();
     
-    // Get Line Sensor data from the line follower sensor
-    int lineSensorState = _lineFollowerSensor->readSensors();
-    bool isLineDetected = _lineFollowerSensor->isLineDetected();
+//     // Get Line Sensor data from the line follower sensor
+//     int lineSensorState = _lineFollowerSensor->readSensors();
+//     bool isLineDetected = _lineFollowerSensor->isLineDetected();
     
-    // Print the data to Serial for debugging
-    Serial.print("Couleur détectée: ");
-    Serial.print(colorName);
-    Serial.print(" (");
-    Serial.print(color);
-    Serial.println(")");
+//     // Print the data to Serial for debugging
+//     Serial.print("Couleur détectée: ");
+//     Serial.print(colorName);
+//     Serial.print(" (");
+//     Serial.print(color);
+//     Serial.println(")");
     
-    Serial.print("Distance mesurée (cm): ");
-    Serial.println(distance);
+//     Serial.print("Distance mesurée (cm): ");
+//     Serial.println(distance);
     
-    Serial.print("État capteur de ligne: ");
-    Serial.println(lineSensorState);
+//     Serial.print("État capteur de ligne: ");
+//     Serial.println(lineSensorState);
     
-    Serial.print("Ligne détectée: ");
-    Serial.println(isLineDetected ? "OUI" : "NON");
+//     Serial.print("Ligne détectée: ");
+//     Serial.println(isLineDetected ? "OUI" : "NON");
     
-    Serial.println("---");
-}
+//     Serial.println("---");
+// }

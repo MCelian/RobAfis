@@ -7,31 +7,37 @@ class Claw {
 public:
     Claw(int port) {
         _motor = new MeMegaPiDCMotor(port);
-        stop();
     };
 
     ~Claw() {
         delete _motor;
     }
 
+    void initialize() {
+        stop();
+        closeUntilLimit();
+        Serial.println("Claw initialized, opening to limit");
+        openUntilLimit();
+    }
+
     void openDuringMs(int durationMs) {
-        _motor->run(-100);
+        _motor->run(+100);
         delay(durationMs);
         stop();
     }
 
     void closeDuringMs(int durationMs) {
-        _motor->run(100);
+        _motor->run(-100);
         delay(durationMs);
         stop();
     }
 
     void openUntilLimit() {
-        openDuringMs(6000);
+        openDuringMs(3000);
     }
 
     void closeUntilLimit() {
-        closeDuringMs(6000);
+        closeDuringMs(4000);
     }
 
     void stop() {
