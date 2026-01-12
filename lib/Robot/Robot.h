@@ -8,6 +8,16 @@
 #include "LineFollowerSensor.h"
 #include "ColorSensor.h"
 
+template <typename RobotComponent>
+void initializeComponent(RobotComponent* robotComponent) {
+    robotComponent->initialize();
+}
+
+template <typename Sensor>
+int getSensorData(Sensor* sensor) {
+    sensor->getSensorData();
+}
+
 class Robot {
 public:
     Robot();
@@ -46,6 +56,10 @@ public:
         delete _colorSensor;
         _colorSensor = sensor;
     }
+    
+    void initialize() {
+        initializeComponent(_arm);
+    }
 
     void advanceForwardUntilObstacle();
     void openClawDuringM(int durationMs);
@@ -56,29 +70,6 @@ public:
 
     void advanceFowardUntilPointZone();
 
-    void initializeChassis() {
-        _chassis->initialize();
-    }
-
-    void initializeArm() {
-        _arm->initialize();
-    }
-
-    void initializeClaw() {
-        _claw->closeUntilLimit();
-    }
-
-    void initializeUltrasonicSensor() {
-        _ultrasonicSensor->initialize();
-    }
-
-    void initializeColorSensor() {
-        _colorSensor->initialize();
-    }
-
-    void doScenarioAutoTest();
-    void doScenarioTry();
-    void doScenarioConversion();
     void doEmergencyStop();
 
     void lineDetectedCountIncrement() {
@@ -91,10 +82,6 @@ public:
 
     void lineDetectedCountReset() {
         _lineDetectedCount = 0;
-    }
-
-    int getColorData() {
-        return _colorSensor->getColor();
     }
 
     int getDistanceData() {

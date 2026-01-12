@@ -18,7 +18,7 @@ void setup() {
   robot = RobotFactory::createRugbyRobot();
   //robot->initializeChassis();
   //robot->initializeClaw();
-  //robot->initializeArm();
+  robot->initialize();
   //robot->initializeUltrasonicSensor();
   //robot->initializeColorSensor();
   //robot->doScenarioAutoTest();

@@ -1,11 +1,5 @@
 #include "UltrasonicSensor.h"
 
-UltrasonicSensor::UltrasonicSensor(int port) {
-    _sensor = new MeUltrasonicSensor(port);
-    _detectionThresholdCm = 19;
-    _lastValid = 0;
-}
-
 int UltrasonicSensor::setDetectionThreshold(int thresholdCm) {
     _detectionThresholdCm = thresholdCm;
     return true;
