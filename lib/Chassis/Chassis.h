@@ -3,6 +3,16 @@
 
 #include "Motor.h"
 
+#define MOTOR_MIN_PULSES 5
+
+#define STEER_PWM 150
+#define STEER_CALIBRATION_TIMEOUT_MS 100000
+
+#define ADVANCE_PWM 150
+#define ADVANCE_CALIBRATION_DURATION 200
+
+#define STOP_DURATION_MS 500
+
 class Chassis {
 public:
     Chassis(Motor* motorAdvance, Motor* motorSteering);
@@ -20,19 +30,20 @@ public:
     };
 
     void steerToAngle(int angle) {
+        // NOT TESTED,  MAY NOT WORK
         _motorSteering->moveToPosition(angle, 0);
     };
 
     void advanceForwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motorAdvance->moveUntilStall(+100, 100, durationMs, stopCondition);
+        _motorAdvance->moveUntilStall(+ADVANCE_PWM, MOTOR_MIN_PULSES, durationMs, stopCondition);
     };
 
     void advanceBackwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motorAdvance->moveUntilStall(-100, 100, durationMs, stopCondition);
+        _motorAdvance->moveUntilStall(-ADVANCE_PWM, MOTOR_MIN_PULSES, durationMs, stopCondition);
     };
 
     void advanceStop() {
-        _motorAdvance->moveUntilStall(0, 100, 10000);
+        _motorAdvance->moveUntilStall(0, MOTOR_MIN_PULSES, STOP_DURATION_MS);
     };
 
     void pivotLookLeft();

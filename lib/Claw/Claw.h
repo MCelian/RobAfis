@@ -17,8 +17,6 @@ public:
     void initialize() {
         stop();
         closeUntilLimit();
-        Serial.println("Claw initialized, opening to limit");
-        openUntilLimit();
     }
 
     void openDuringMs(int durationMs) {

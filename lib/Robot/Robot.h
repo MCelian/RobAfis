@@ -38,7 +38,6 @@ public:
         }
 
         _ultrasonicSensor = sensor;
-
         _staticSensor = sensor;
     }
 
@@ -68,7 +67,7 @@ public:
 
     void advanceFowardUntilPointZone();
 
-    void doEmergencyStop();
+    void stopAllComponents();
 
     String getSensorDataToString();
 private:
@@ -80,14 +79,10 @@ private:
     static bool checkObstacle();
     LineFollowerSensor* _lineFollowerSensor = nullptr;
     ColorSensor* _colorSensor = nullptr;
-    int _lineDetectedCount = 0;
 
     void pivotLookLeft();
     void pivotLookRight();
     void realignCenter();
-    int _distLeft = 0;
-    int _distCenter = 0;
-    int _distRight = 0;
 };
 
 #endif

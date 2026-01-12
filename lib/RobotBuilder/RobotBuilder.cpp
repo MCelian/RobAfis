@@ -37,7 +37,6 @@ Robot* RobotBuilder::getResult() {
     return temp;
 }
 
-
 void RobotBuilder::addChassis() {
     _robot->setChassis(new Chassis(&objMotorAdvance, &objMotorSteering));
 }

@@ -6,23 +6,18 @@ Chassis::Chassis(Motor* motorAdvance, Motor* motorSteering) {
 }
 
 void Chassis::initialize() {
-    // Now this check is safe
     if (_motorSteering == nullptr || _motorAdvance == nullptr) {
         Serial.println("ERROR: Motors not linked!");
         return;
     }
 
-    Serial.println("--- STARTING ---");
-
-    Serial.println("Finding Right Limit...");
-    _motorSteering->moveUntilStall(150, 5, 100000);
+    _motorSteering->moveUntilStall(STEER_PWM, MOTOR_MIN_PULSES, STEER_CALIBRATION_TIMEOUT_MS);
     _motorSteering->setCurrentPositionAsZero();
 
-    Serial.println("Finding Left Limit...");
-    long totalWidthRaw = _motorSteering->moveUntilStall(-150, 5, 10000);
+    long totalWidthRaw = _motorSteering->moveUntilStall(-STEER_PWM, MOTOR_MIN_PULSES, STEER_CALIBRATION_TIMEOUT_MS);
 
     long halfWidth = totalWidthRaw / 2;
-    _motorSteering->moveToPosition(halfWidth, 150);
+    _motorSteering->moveToPosition(halfWidth, STEER_PWM);
 
     _motorSteering->setCurrentPositionAsZero();
     _motorSteering->moveToPosition(0, 0);
@@ -32,12 +27,7 @@ void Chassis::initialize() {
     _steerRightLimit = range;
     _steerLeftLimit = -range;
 
-    Serial.print("New Left Limit: "); Serial.println(_steerLeftLimit);
-    Serial.print("New Right Limit: "); Serial.println(_steerRightLimit);
-
-    Serial.println("PERFECT ZERO!");
-
-    advanceForwardDuringMs(1000);
+    advanceForwardDuringMs(ADVANCE_CALIBRATION_DURATION);
     _isInitialized = true;
 }
 

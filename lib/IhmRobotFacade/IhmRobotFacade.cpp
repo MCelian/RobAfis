@@ -26,17 +26,17 @@ void IhmRobotFacade::executeIhmCommand(int command) {
 
         case ELECTRIC_EMERGENCY_STOP_ID:
             _ihm->println("Executing: Electric Emergency Stop");
-            _robot->doEmergencyStop();
+            _robot->stopAllComponents();
         break;
 
         case STOP_ID:
             _ihm->println("Executing: Stop");
-            _robot->doEmergencyStop();
+            _robot->stopAllComponents();
         break;
 
         case RESUME_ID:
             _ihm->println("Executing: Resume");
-            _robot->doEmergencyStop();
+            _robot->stopAllComponents();
         break;
 
         case SCENARIO_AUTO_TEST_ID:

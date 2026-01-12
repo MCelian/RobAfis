@@ -20,7 +20,7 @@ Robot::~Robot() {
     delete _colorSensor;
 }
 
-void Robot::doEmergencyStop() {
+void Robot::stopAllComponents() {
     _chassis->advanceStop();
     _arm->stop();
     _claw->stop();
@@ -43,7 +43,7 @@ void Robot::moveArmToGrabPosition() {
 }
 
 void Robot::moveArmToNeutralPosition() {
-
+    // TODO
 }
 
 void Robot::advanceFowardUntilPointZone() {
@@ -73,6 +73,7 @@ String Robot::getSensorDataToString() {
     data += "-----------------------\n";
     data += "\n";
 }
+
 // void Robot::doScenarioTry() {
 //     Serial.println("doScenarioTry: START");
 //     // ---------------------------------------------------------
@@ -196,39 +197,4 @@ String Robot::getSensorDataToString() {
 //     _chassis->advanceStop();
 
 //     Serial.println("doScenarioTry: END");
-// }
-
-// void Robot::doScenarioConversion() {
-
-// }
-
-// void Robot::getRobotData() {
-//     // Get Color data from the color sensor
-//     int color = _colorSensor->getColor();
-//     String colorName = _colorSensor->getCurrentColorName();
-    
-//     // Get Distance data from the ultrasonic sensor
-//     int distance = _ultrasonicSensor->getDistance();
-    
-//     // Get Line Sensor data from the line follower sensor
-//     int lineSensorState = _lineFollowerSensor->readSensors();
-//     bool isLineDetected = _lineFollowerSensor->isLineDetected();
-    
-//     // Print the data to Serial for debugging
-//     Serial.print("Couleur détectée: ");
-//     Serial.print(colorName);
-//     Serial.print(" (");
-//     Serial.print(color);
-//     Serial.println(")");
-    
-//     Serial.print("Distance mesurée (cm): ");
-//     Serial.println(distance);
-    
-//     Serial.print("État capteur de ligne: ");
-//     Serial.println(lineSensorState);
-    
-//     Serial.print("Ligne détectée: ");
-//     Serial.println(isLineDetected ? "OUI" : "NON");
-    
-//     Serial.println("---");
 // }

@@ -11,11 +11,17 @@ public:
     void handleInterrupt(); 
 
     // Your movement methods
-    void setCurrentPositionAsZero() { _encoder.setPulsePos(0); }
-    long moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned long timeoutMs, bool (*stopCondition)() = nullptr);
-    void moveToPosition(long targetPos, int speed = 100);
-    long getPulsePos() { return _encoder.getPulsePos(); }
+    void setCurrentPositionAsZero() {
+        _encoder.setPulsePos(0);
+    }
 
+    long moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned long timeoutMs, bool (*stopCondition)() = nullptr);
+
+    void moveToPosition(long targetPos, int speed = 100);
+    
+    long getPulsePos() {
+        return _encoder.getPulsePos();
+    }
 private:
     MeEncoderOnBoard _encoder;
     int _port;

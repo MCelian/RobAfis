@@ -17,7 +17,7 @@ public:
 
     void initialize() {
         Serial.println("START");
-        _motor->moveUntilStall(-INITIALIZE_PWM, NO_MOVE_THRESHOLD, INITIALIZE_MAX_DURATION_MS);
+        _motor->moveUntilStall(+INITIALIZE_PWM, NO_MOVE_THRESHOLD, INITIALIZE_MAX_DURATION_MS);
     }
 
     void turnPositiveDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {

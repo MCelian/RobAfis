@@ -42,7 +42,6 @@ long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned lo
             _encoder.setTarPWM(0);
             return _encoder.getCurPos();
         }
-        // --------------------------------
 
         int sampleTime = 100;
         if (millis() - lastCheckTime > sampleTime) {
@@ -83,27 +82,20 @@ void Motor::moveToPosition(long targetPosition, int speed = 100) {
     
     while (abs(error) > 1) {
         _encoder.loop();
-        
-        // 1. Calculate simple proportional power
-        // Higher number (e.g., 4) = More aggressive
-        int power = error * 4; 
-        
-        // 2. FRICTION COMPENSATION (The Magic Fix)
-        // If the calculated power is too weak to move the gears (e.g., 10), 
-        // force it to be at least 60 (or -60).
+
+        int aggressivity = 4; // Higher values = more aggressive response
+        int power = error * aggressivity;
+
+        // Minimum Power Threshold
         if (power > 0 && power < 60) power = 60;
         if (power < 0 && power > -60) power = -60;
         
-        // 3. Safety Clamp (Don't go too fast)
+        // Power Limit
         power = constrain(power, -150, 150);
         
-        // 4. Send command
-        _encoder.setMotorPwm(power);
-        
-        // Recalculate error
+        _encoder.setMotorPwm(power);        
         error = targetPosition - _encoder.getCurPos();
     }
     
     _encoder.setMotorPwm(0);
-    Serial.println("Move To Position Complete.");
 }
