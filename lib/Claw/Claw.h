@@ -2,6 +2,7 @@
 #ifdef CLAW_H
 
 #include "MeMegaPiDCMotor.h"
+#define PWM 100
 
 class Claw {
 public:
@@ -21,13 +22,13 @@ public:
     }
 
     void openDuringMs(int durationMs) {
-        _motor->run(+100);
+        _motor->run(-PWM);
         delay(durationMs);
         stop();
     }
 
     void closeDuringMs(int durationMs) {
-        _motor->run(-100);
+        _motor->run(+PWM);
         delay(durationMs);
         stop();
     }

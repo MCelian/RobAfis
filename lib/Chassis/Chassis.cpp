@@ -15,18 +15,15 @@ void Chassis::initialize() {
     Serial.println("--- STARTING ---");
 
     Serial.println("Finding Right Limit...");
-    _motorSteering->moveUntilStall(150, 1, 10000);
-    _motorSteering->setCurrentPositionAsZero(); // This is now 0 (Right Limit)
+    _motorSteering->moveUntilStall(150, 5, 100000);
+    _motorSteering->setCurrentPositionAsZero();
 
-    // 2. Move LEFT
     Serial.println("Finding Left Limit...");
     long totalWidthRaw = _motorSteering->moveUntilStall(-150, 5, 10000);
 
-    // Setup PID for the final move
     long halfWidth = totalWidthRaw / 2;
     _motorSteering->moveToPosition(halfWidth, 150);
 
-    // Final Zeroing
     _motorSteering->setCurrentPositionAsZero();
     _motorSteering->moveToPosition(0, 0);
 
@@ -40,6 +37,7 @@ void Chassis::initialize() {
 
     Serial.println("PERFECT ZERO!");
 
+    advanceForwardDuringMs(1000);
     _isInitialized = true;
 }
 

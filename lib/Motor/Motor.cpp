@@ -18,13 +18,13 @@ void Motor::handleInterrupt() {
 }
 
 long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned long timeoutMs, bool (*stopCondition)()) {
-    _encoder.setTarPWM(200);
+    _encoder.setTarPWM(pwmPower);
 
     long startTime = millis();
     long lastCheckTime = millis();
     long lastPulsePosition = _encoder.getPulsePos();
 
-    _encoder.setMotorPwm(-255);
+    _encoder.setMotorPwm(pwmPower);
 
     // Motor Startup Delay
     while(millis() - startTime < 500) {

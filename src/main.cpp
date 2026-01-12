@@ -19,7 +19,7 @@ void setup() {
   robot->initialize();
 
   ihmRobotFacade = new IhmRobotFacade(ihm, robot);
-  ihmRobotFacade->test();
+  //ihmRobotFacade->test();
 }
 
 void loop() {

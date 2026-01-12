@@ -24,7 +24,7 @@ public:
     };
 
     void advanceForwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motorAdvance->moveUntilStall(100, 100, durationMs, stopCondition);
+        _motorAdvance->moveUntilStall(+100, 100, durationMs, stopCondition);
     };
 
     void advanceBackwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
