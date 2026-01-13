@@ -38,14 +38,13 @@ void IhmRobotFacade::executeIhmCommand(char command) {
 
         case RESUME_ID:
             _ihm->println("Executing: Resume");
-            _robot->stopAllComponents();
+            executeIhmCommand(_ihm->lastExecutedCommand);
         break;
 
         case SCENARIO_AUTO_TEST_ID:
             _ihm->println("Executing: Auto Test Scenario");
 
             if (!_robot->isBallInClaw()) {
-                Serial.println("advanceForwardUntilObstacle");
                 _robot->advanceForwardUntilObstacle();
 
                 _robot->openClawUntilLimit();
@@ -57,13 +56,17 @@ void IhmRobotFacade::executeIhmCommand(char command) {
 
             _robot->moveArmToNeutralPosition();
 
-            // Serial.println("advanceForwardUntilPointZone");
             // bool arrivedAtPointZone = _robot->advanceForwardUntilPointZone();
             // if (arrivedAtPointZone) {
             //     _ihm->addFivePointsToScore();
             // }
+            _robot->advanceForwardUntilLine();
+            _robot->advanceForwardUntilLine();
+            _robot->advanceForwardUntilLine();
+            _robot->advanceBackwardDuringMs(5000);
 
-            Serial.println("FIN");
+            _robot->moveArmToGrabPosition();
+
             _ihm->println("FIN");
         break;
 
@@ -81,7 +84,16 @@ void IhmRobotFacade::executeIhmCommand(char command) {
         case SCENARIO_CONVERSION_ID:
             _ihm->println("Executing: Conversion Scenario");
 
-            _robot->searchAndGrabBall();
+            if (!_robot->isBallInClaw()) {
+                _robot->advanceForwardUntilObstacle();
+
+                _robot->openClawUntilLimit();
+                _robot->moveArmToGrabPosition();
+                _robot->closeClawUntilLimit();
+                _robot->moveArmToNeutralPosition();
+                _ihm->setBallIsInClaw();
+                _robot->setBallIsInClaw();
+            }
 
             // turnAround();
             _robot->pivotLookLeft();

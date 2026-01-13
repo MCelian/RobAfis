@@ -32,9 +32,10 @@ public:
 
     void print(const String& msg);
     void println(const String& msg);
+    
+    char lastExecutedCommand;
 private:
     HardwareSerial* _serial;
-    char _lastExecutedCommand;
     bool _isBallInClaw = false;
     int _score = 0;
     

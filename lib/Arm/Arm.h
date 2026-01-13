@@ -4,8 +4,8 @@
 #include "Motor.h"
 
 #define PWM 200
-#define NO_MOVE_THRESHOLD 38
-#define INITIALIZE_MAX_DURATION_MS 10000
+#define NO_MOVE_THRESHOLD 40
+#define INITIALIZE_MAX_DURATION_MS 30000
 #define STOP_MAX_DURATION_MS 500
 
 class Arm {
@@ -17,7 +17,8 @@ public:
     void initialize() {
         _motor->moveUntilStall(PWM, NO_MOVE_THRESHOLD, INITIALIZE_MAX_DURATION_MS);
         Serial.println("ZERO FOUND");
-        _motor->moveUntilStall(PWM, -1, 2000);
+        _motor->moveUntilStall(PWM, -1, 1700);
+        Serial.println("END OFFSET");
         _motor->setCurrentPositionAsZero();
         _motor->moveUntilStall(-PWM, -1, 3000);
     }

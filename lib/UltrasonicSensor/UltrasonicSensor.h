@@ -16,13 +16,13 @@ public:
     int getDistance() {
         int distance = _sensor->distanceCm();
         _lastValid = distance < 400 && distance > 0 ? distance : _lastValid;
+        Serial.print("distance: ");
+        Serial.println(distance);
         return _lastValid;
     }
 
     bool isObjectDetected() {
         int distance = getDistance();
-        Serial.print("distance: ");
-        Serial.println(distance);
         return distance > 0 && distance < _detectionThresholdCm;
     }
 private:

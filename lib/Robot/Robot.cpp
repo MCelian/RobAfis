@@ -18,10 +18,10 @@ bool Robot::checkLineDetection() {
     return false;
 }
 
-bool Robot::checkColorCode(int code) {
+bool Robot::checkColorCode(double code) {
     if (_staticColorSensor != nullptr) {
-        int currentCode = _staticColorSensor->getColorCode();
-        int delta = abs(currentCode - code);
+        double currentCode = _staticColorSensor->getColorCode();
+        double delta = abs(currentCode - code);
         Serial.print("current Code: ");
         Serial.println(currentCode);
         Serial.print("Wanted Code: ");
@@ -32,7 +32,6 @@ bool Robot::checkColorCode(int code) {
     }
     return false;
 }
-
 
 Robot::~Robot() {
     delete _chassis;
@@ -47,8 +46,8 @@ void Robot::initialize() {
     initializeComponent(_ultrasonicSensor);
     initializeComponent(_lineFollowerSensor);
     initializeComponent(_colorSensor);
-    //initializeComponent(_arm);
-    // initializeComponent(_claw);
+    initializeComponent(_arm);
+    initializeComponent(_claw);
     initializeComponent(_chassis);
 }
 
@@ -116,21 +115,16 @@ void Robot::stopAllComponents() {
 }
 
 bool Robot::advanceForwardUntilPointZone() {
-    unsigned long startTime = millis();
-    int timeoutMs = 10000;
-    const int stepMs = 100;
+    const int stepMs = 300;
     
-    int greenCode = 23595;
+    double greenCode = 3890219;
 
-    // while (!checkColorCode(greenCode) && (millis() - startTime) < (unsigned long)timeoutMs) {
     while (!checkColorCode(greenCode)) {
-        Serial.println("START");
         Serial.println(_colorSensor->getColorCode());
-        // _chassis->advanceForwardDuringMs(stepMs);
-        return true;
+        _chassis->advanceForwardDuringMs(stepMs);
     }
-    Serial.println("YESSSSSSSSSSSS");
-    return false;
+
+    return _colorSensor->getColorCode() == greenCode;
 }
 
 void Robot::searchAndGrabBall() {

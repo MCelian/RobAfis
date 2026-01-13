@@ -16,6 +16,7 @@ public:
 
     void initialize() {
         stop();
+        openDuringMs(2000);
         closeUntilLimit();
     }
 

@@ -133,7 +133,8 @@ public:
     };
 
     void test() {
-        _colorSensor->getColorCode();
+        // _colorSensor->getColorCode();
+        _ultrasonicSensor->getDistance();
     }
 private:
     Chassis* _chassis = nullptr;
@@ -148,7 +149,7 @@ private:
 
     ColorSensor* _colorSensor = nullptr;
     static ColorSensor* _staticColorSensor;
-    static bool checkColorCode(int position);
+    static bool checkColorCode(double position);
 
     bool _isBallInClaw = false;
     int _score = 0;
