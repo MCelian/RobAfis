@@ -29,13 +29,3 @@ void Chassis::initialize() {
 
     _isInitialized = true;
 }
-
-void Chassis::pivotLookLeft() {
-    // To point NOSE Left, we must steer RIGHT and reverse
-    steerToLeftLimit();
-}
-
-void Chassis::pivotLookRight() {
-    // To point NOSE Right, we must steer LEFT and reverse
-    steerToRightLimit();
-}

@@ -40,9 +40,13 @@ public:
         _motorAdvance->moveUntilStall(0, MOTOR_MIN_PULSES, STOP_DURATION_MS);
     };
 
-    void pivotLookLeft();
+    void pivotLookLeft() {
+        _motorSteering->moveToPosition(_steerLeftLimit + 20);
+    }
 
-    void pivotLookRight();
+    void pivotLookRight() {
+        _motorSteering->moveToPosition(_steerLeftLimit - 20);
+    }
 private:
     Motor* _motorAdvance = nullptr;
     Motor* _motorSteering = nullptr;

@@ -13,7 +13,10 @@ public:
     void sendRobotDataToIhm();
 
     void test() {
-        _robot->test();
+        _robot->pivotLookLeft();
+        _robot->advanceForwardUntilObstacle();
+        _robot->steerCenter();
+        _robot->advanceBackwardDuringMs(3000);
     }
 private:
     Ihm* _ihm = nullptr;
