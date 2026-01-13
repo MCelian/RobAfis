@@ -100,6 +100,11 @@ void IhmRobotFacade::executeIhmCommand(char command) {
             _robot->advanceForwardDuringMs(3000);
             _robot->steerCenter();
             _robot->advanceBackwardDuringMs(3000);
+            
+            _robot->pivotLookLeft();
+            _robot->advanceForwardDuringMs(3000);
+            _robot->steerCenter();
+            _robot->advanceBackwardDuringMs(3000);
         break;
 
         default:

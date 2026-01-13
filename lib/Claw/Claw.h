@@ -37,7 +37,7 @@ public:
     }
 
     void closeUntilLimit() {
-        closeDuringMs(4000);
+        closeDuringMs(6000);
     }
 
     void stop() {

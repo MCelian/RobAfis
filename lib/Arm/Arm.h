@@ -40,7 +40,6 @@ public:
     }
 
     void moveArmToNeutralPosition() {
-        _motor->moveToPosition(0, PWM);
         _motor->moveUntilStall(-PWM, -1, 3000);
     }
 private:

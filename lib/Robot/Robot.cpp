@@ -74,7 +74,7 @@ void Robot::moveArmToGrabPosition() {
 }
 
 void Robot::moveArmToNeutralPosition() {
-    _arm->moveArmToNeutralPosition();
+    _arm->initialize();
 }
 
 // Chassis methods

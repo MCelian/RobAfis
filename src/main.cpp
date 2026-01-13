@@ -21,7 +21,6 @@ void setup() {
   // resetCard();
   Serial.begin(9600);
   ihm = new Ihm(&Serial3);
-  ihm->initialize();
   
   robot = RobotFactory::createRugbyRobot();
   robot->initialize();
@@ -30,6 +29,7 @@ void setup() {
 }
 
 void loop() {
+  ihm->initialize();
   char command = ihm->readCommand();
   // ihmRobotFacade->test();
   ihmRobotFacade->sendRobotDataToIhm();
