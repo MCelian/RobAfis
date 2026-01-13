@@ -105,6 +105,8 @@ void IhmRobotFacade::executeIhmCommand(char command) {
             _robot->advanceForwardDuringMs(3000);
             _robot->steerCenter();
             _robot->advanceBackwardDuringMs(3000);
+
+            _robot->advanceForwardDuringMs(20000);
         break;
 
         default:
