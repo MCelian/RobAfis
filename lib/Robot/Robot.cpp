@@ -1,15 +1,21 @@
 #include "Robot.h"
 
-UltrasonicSensor* Robot::_staticSensor = nullptr;
+UltrasonicSensor* Robot::_staticUltrasoundSensor = nullptr;
+LineFollowerSensor* Robot::_staticLineFollowerSensor = nullptr;
 
 bool Robot::checkObstacle() {
-    if (_staticSensor != nullptr) {
-        return _staticSensor->isObjectDetected();
+    if (_staticUltrasoundSensor != nullptr) {
+        return _staticUltrasoundSensor->isObjectDetected();
     }
     return false;
 }
 
-Robot::Robot() {}
+bool Robot::checkLineDetection() {
+    if (_staticLineFollowerSensor != nullptr) {
+        return _staticLineFollowerSensor->isLineDetected();
+    }
+    return false;
+}
 
 Robot::~Robot() {
     delete _chassis;
@@ -20,24 +26,25 @@ Robot::~Robot() {
     delete _colorSensor;
 }
 
-void Robot::stopAllComponents() {
-    _chassis->advanceStop();
-    _arm->stop();
-    _claw->stop();
+void Robot::initialize() {
+    initializeComponent(_ultrasonicSensor);
+    initializeComponent(_lineFollowerSensor);
+    initializeComponent(_colorSensor);
+    initializeComponent(_claw);
+    initializeComponent(_arm);
+    initializeComponent(_chassis);
 }
 
-void Robot::advanceForwardUntilObstacle() {
-    _chassis->advanceForwardDuringMs(60000, checkObstacle);
-}
-
+// Claw methods
 void Robot::closeClawDuringMs(int durationMs) {
     _claw->closeDuringMs(durationMs);
 }
 
-void Robot::openClawDuringM(int durationMs) {
+void Robot::openClawDuringMs(int durationMs) {
     _claw->openDuringMs(durationMs);
 }
 
+// Arm methods
 void Robot::moveArmToGrabPosition() {
     _arm->moveToGrabPosition();
 }
@@ -46,155 +53,67 @@ void Robot::moveArmToNeutralPosition() {
     // TODO
 }
 
-void Robot::advanceFowardUntilPointZone() {
-    // Should add timeout
-    while (_colorSensor->getColor() != _colorSensor->GREEN) {
+// Chassis methods
+void Robot::advanceForwardDuringMs(int duration) {
+    _chassis->advanceForwardDuringMs(duration);
+}
+
+void Robot::advanceBackwardDuringMs(int duration) {
+    _chassis->advanceBackwardDuringMs(duration);
+
+}
+
+void Robot::advanceForwardUntilObstacle() {
+    _chassis->advanceForwardDuringMs(60000, checkObstacle);
+}
+
+void Robot::advanceForwardUntilLine() {
+    _chassis->advanceForwardDuringMs(60000, checkLineDetection);
+}
+
+void Robot::steerCenter() {
+    _chassis->steerToCenter();
+}
+
+void Robot::pivotLookLeft() {
+    _chassis->pivotLookLeft();
+}
+
+void Robot::pivotLookRight() {
+    _chassis->pivotLookRight();
+}
+
+// Concrete actions
+void Robot::stopAllComponents() {
+    _chassis->advanceStop();
+    _arm->stop();
+    _claw->stop();
+}
+
+bool Robot::advanceForwardUntilPointZone() {
+    unsigned long startTime = millis();
+    int timeoutMs = 10000;
+    const int stepMs = 100;
+    while (_colorSensor->getColor() != _colorSensor->GREEN && (millis() - startTime) < (unsigned long)timeoutMs) {
         Serial.println(_colorSensor->getColor());
-        _chassis->advanceForwardDuringMs(20000);
+        _chassis->advanceForwardDuringMs(stepMs);
     }
-    _arm->moveToGrabPosition();
+    if (getCurrentZone() == "En but") {
+        _arm->moveToGrabPosition();
+        return true;
+    }
+    return false;
 }
 
-String Robot::getSensorDataToString() {
-    String colorName = _colorSensor->getCurrentColorName();
-    int distance = _ultrasonicSensor->getDistance();
-    bool isLineDetectedLeft = _lineFollowerSensor->isLineDetectedLeft();
-    bool isLineDetectedRight = _lineFollowerSensor->isLineDetectedRight();
-    bool isLineDetected = isLineDetectedLeft || isLineDetectedRight;
-    // 
-    String data = "-----------------------\n";
-    data += "SENSOR_DATA\n";
-    data += "-----------------------\n";
-    data += "Color: " + colorName + "\n";
-    data += "Ultrasound Distance: " + String(distance) + " cm\n";
-    data += "Is Line LEFT Detected: " + String(isLineDetectedLeft ? "OUI" : "NON") + "\n";
-    data += "Is Line RIGHT Detected: " + String(isLineDetectedRight ? "OUI" : "NON") + "\n";
-    data += "Is Line Detected: " + String(isLineDetected ? "OUI" : "NON") + "\n";
-    data += "-----------------------\n";
-    data += "\n";
+void Robot::searchAndGrabBall() {
+    if (!_isBallInClaw) return;
+    advanceForwardUntilObstacle();
+    openClawDuringMs(3000);
+    moveArmToGrabPosition();
+    closeClawDuringMs(6000);
 }
 
-// void Robot::doScenarioTry() {
-//     Serial.println("doScenarioTry: START");
-//     // ---------------------------------------------------------
-//     // PHASE 1: THE SCAN (Doing "Niches")
-//     // ---------------------------------------------------------
-//     Serial.println("PHASE 1: SCAN - measuring center");
-    
-//     // 1. Measure CENTER
-//     _chassis->steerCenter();
-//     _chassis->waitAndKeepAlive(200);
-//     _distCenter = _ultrasonicSensor->getDistance();
-//     Serial.print("Measured CENTER distance: ");
-//     Serial.println(_distCenter);
-
-//     // while (true) {
-//     //     _distCenter = _ultrasonicSensor->getDistance();
-//     //     Serial.print("Measured CENTER distance: ");
-//     //     Serial.println(_distCenter);
-//     // }
-
-//     // 2. Measure LEFT
-//     Serial.println("Measuring LEFT (pivot look left)");
-//     // We reverse-turn to point the nose left
-//     pivotLookLeft(); 
-//     _distLeft = _ultrasonicSensor->getDistance();
-//     Serial.print("Measured LEFT distance: ");
-//     Serial.println(_distLeft);
-
-//     // 3. Measure RIGHT
-//     Serial.println("Measuring RIGHT (swing from left to right)");
-//     // We are currently pointing Left. We need to swing all the way Right.
-//     // So we do the "Pivot Right" move TWICE (or for double time)
-//     _chassis->steerLeft(); // Steer Left + Reverse = Nose goes Right
-//     _chassis->advanceBackward();
-//     _chassis->waitAndKeepAlive(1200); // Double time to swing from Left to Right
-//     _chassis->advanceStop();
-//     _chassis->waitAndKeepAlive(200);
-//     _distRight = _ultrasonicSensor->getDistance();
-//     Serial.print("Measured RIGHT distance: ");
-//     Serial.println(_distRight);
-
-//     // 4. Re-Center (Roughly)
-//     Serial.println("Re-centering after scan");
-//     // We are pointing Right. Pivot halfway back to center.
-//     _chassis->steerRight();
-//     _chassis->advanceBackward();
-//     _chassis->waitAndKeepAlive(600);
-//     _chassis->advanceStop();
-
-//     // ---------------------------------------------------------
-//     // PHASE 2: THE DECISION
-//     // ---------------------------------------------------------
-//     Serial.println("PHASE 2: DECISION - evaluating best direction");
-
-//     // Default to going straight
-//     int bestDir = 0; // 0=Center, -1=Left, 1=Right
-//     int maxDist = _distCenter;
-//     Serial.print("Initial best = CENTER (dist=");
-//     Serial.print(maxDist);
-//     Serial.println(")");
-
-//     // Is Left better?
-//     if (_distLeft > maxDist) {
-//         maxDist = _distLeft;
-//         bestDir = -1;
-//         Serial.print("LEFT is better (dist=");
-//         Serial.print(_distLeft);
-//         Serial.println(")");
-//     }
-//     // Is Right even better?
-//     if (_distRight > maxDist) {
-//         maxDist = _distRight;
-//         bestDir = 1;
-//         Serial.print("RIGHT is best (dist=");
-//         Serial.print(_distRight);
-//         Serial.println(")");
-//     }
-
-//     Serial.print("Decision: bestDir=");
-//     Serial.print(bestDir);
-//     Serial.print(" maxDist=");
-//     Serial.println(maxDist);
-
-//     // ---------------------------------------------------------
-//     // PHASE 3: EXECUTION (Go to Green Zone)
-//     // ---------------------------------------------------------
-//     Serial.println("PHASE 3: EXECUTION");
-
-//     if (bestDir == -1) {
-//         Serial.println("Action: TURN LEFT and drive into gap");
-//         // TURN LEFT and Drive
-//         _chassis->steerLeft();
-//         _chassis->advanceForward();
-//         _chassis->waitAndKeepAlive(1000); // Turn into the gap
-//     } 
-//     else if (bestDir == 1) {
-//         Serial.println("Action: TURN RIGHT and drive into gap");
-//         // TURN RIGHT and Drive
-//         _chassis->steerRight();
-//         _chassis->advanceForward();
-//         _chassis->waitAndKeepAlive(1000); // Turn into the gap
-//     } 
-//     else {
-//         Serial.println("Action: CENTER - drive straight");
-//         // CENTER is best, just start driving
-//         _chassis->steerCenter();
-//         _chassis->advanceForward();
-//     }
-
-//     // Now straighten up to drive through the gap to the Green Zone
-//     Serial.println("Straightening and driving through gap");
-//     _chassis->steerCenter();
-//     _chassis->advanceForward();
-    
-//     // Drive for X seconds until we cross the zone
-//     // If you have a line sensor, replace this timer with `while(!lineDetected)`
-//     _chassis->waitAndKeepAlive(3000); 
-
-//     // Stop safely
-//     Serial.println("Stopping chassis");
-//     _chassis->advanceStop();
-
-//     Serial.println("doScenarioTry: END");
-// }
+void Robot::goTo22Zone() {
+    if (getCurrentZone() != "Centrale ou zone 22") return;
+    advanceForwardUntilObstacle();
+}

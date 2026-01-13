@@ -9,9 +9,9 @@ void RobotDirector::buildFullRugbyRobot() {
     _builder->addChassis();
     _builder->addArm();
     _builder->addClaw();
-    _builder->addUltrasonicSensor(6);
-    _builder->addLineFollowerSensor(7);
-    _builder->addColorSensor(8);
+    _builder->addUltrasonicSensor();
+    _builder->addLineFollowerSensor();
+    _builder->addColorSensor();
 }
 
 void RobotDirector::createChassisRobot() {

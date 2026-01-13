@@ -19,11 +19,10 @@ void setup() {
   robot->initialize();
 
   ihmRobotFacade = new IhmRobotFacade(ihm, robot);
-  //ihmRobotFacade->test();
 }
 
 void loop() {
+  ihm->reconnectIfNeeded();
   char command = ihm->readCommand();
   ihmRobotFacade->executeIhmCommand(command);
-  ihmRobotFacade->sendRobotDataToIhm();
 }

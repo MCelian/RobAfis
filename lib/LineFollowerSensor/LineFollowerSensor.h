@@ -14,7 +14,11 @@ public:
         _sensor = new MeLineFollower(port);
     }
 
-        bool isLineDetected() {
+    void initialize() {
+        readSensors();
+    }
+
+    bool isLineDetected() {
         return readSensors() != 0;
     }
 

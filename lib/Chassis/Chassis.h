@@ -3,13 +3,12 @@
 
 #include "Motor.h"
 
-#define MOTOR_MIN_PULSES 5
+#define MOTOR_MIN_PULSES 2
 
 #define STEER_PWM 150
 #define STEER_CALIBRATION_TIMEOUT_MS 100000
 
-#define ADVANCE_PWM 150
-#define ADVANCE_CALIBRATION_DURATION 200
+#define ADVANCE_PWM 255
 
 #define STOP_DURATION_MS 500
 
@@ -18,28 +17,23 @@ public:
     Chassis(Motor* motorAdvance, Motor* motorSteering);
     void initialize();
     void steerToLeftLimit() {
-        _motorSteering->moveToPosition(_steerLeftLimit, 0);
+        _motorSteering->moveToPosition(_steerLeftLimit + 40, 0);
     }
 
     void steerToRightLimit() {
-        _motorSteering->moveToPosition(_steerRightLimit, 0);
+        _motorSteering->moveToPosition(_steerRightLimit - 40, 0);
     }
 
     void steerToCenter() {
         _motorSteering->moveToPosition(0, 0);
     };
 
-    void steerToAngle(int angle) {
-        // NOT TESTED,  MAY NOT WORK
-        _motorSteering->moveToPosition(angle, 0);
-    };
-
     void advanceForwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motorAdvance->moveUntilStall(+ADVANCE_PWM, MOTOR_MIN_PULSES, durationMs, stopCondition);
+        _motorAdvance->moveUntilStall(-ADVANCE_PWM, MOTOR_MIN_PULSES, durationMs, stopCondition);
     };
 
     void advanceBackwardDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motorAdvance->moveUntilStall(-ADVANCE_PWM, MOTOR_MIN_PULSES, durationMs, stopCondition);
+        _motorAdvance->moveUntilStall(+ADVANCE_PWM, MOTOR_MIN_PULSES, durationMs, stopCondition);
     };
 
     void advanceStop() {

@@ -42,33 +42,70 @@ void IhmRobotFacade::executeIhmCommand(int command) {
         case SCENARIO_AUTO_TEST_ID:
             _ihm->println("Executing: Auto Test Scenario");
 
-            _robot->advanceForwardUntilObstacle();
-            _robot->openClawDuringM(3000);
-            _robot->moveArmToGrabPosition();
-            _robot->closeClawDuringMs(6000);
-            
+            _robot->searchAndGrabBall();
             _ihm->setBallIsInClaw();
+            _robot->setBallIsInClaw();
 
             _robot->moveArmToNeutralPosition();
-            
-            _robot->advanceFowardUntilPointZone();
+            _robot->advanceForwardUntilLine();
 
-;           _ihm->addFivePointsToScore();
+            if (_robot->advanceForwardUntilPointZone()) {
+                _ihm->addFivePointsToScore();
+            }
         break;
 
         case SCENARIO_TRY_ID:
             _ihm->println("Executing: Try Scenario");
+
+            _robot->advanceForwardUntilObstacle();
+
+            _robot->pivotLookLeft();
+            _robot->steerCenter();
+            _robot->pivotLookRight();
+            _robot->steerCenter();
         break;
 
-        case '8':
+        case SCENARIO_CONVERSION_ID:
             _ihm->println("Executing: Conversion Scenario");
+
+            _robot->searchAndGrabBall();
+
+            // turnAround();
+            _robot->pivotLookLeft();
+            _robot->advanceForwardDuringMs(3000);
+            _robot->steerCenter();
+            _robot->advanceBackwardDuringMs(3000);
         break;
 
         default:
-            return;
+        break;
+        
+        sendRobotDataToIhm();
     }
 }
 
 void IhmRobotFacade::sendRobotDataToIhm() {
-    _ihm->println(_robot->getSensorDataToString());
+    String colorName = _robot->getCurrentColorName();
+    int distance = _robot->getUltrasonicDistance();
+    bool isLineDetectedLeft = _robot->isLineDetectedLeft();
+    bool isLineDetectedRight = _robot->isLineDetectedRight();
+    bool isLineDetected = isLineDetectedLeft || isLineDetectedRight;
+    
+    String data = "-----------------------\n";
+    data += "SENSOR_DATA\n";
+    data += "-----------------------\n";
+    data += "Zone: " + _robot->getCurrentZone() + "\n";
+    _ihm->println(data);
+    data += "Ultrasound Distance: " + String(distance) + " cm\n";
+    _ihm->println(data);
+
+    data += "Is Line LEFT Detected: " + String(isLineDetectedLeft ? "OUI" : "NON") + "\n";
+    data += "Is Line RIGHT Detected: " + String(isLineDetectedRight ? "OUI" : "NON") + "\n";
+    data += "Is Line Detected: " + String(isLineDetected ? "OUI" : "NON") + "\n";
+    _ihm->println(data);
+    
+    data += "-----------------------\n";
+    data += "\n";
+
+    _ihm->println(data);
 }

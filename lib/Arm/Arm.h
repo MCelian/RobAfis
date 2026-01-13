@@ -3,10 +3,9 @@
 
 #include "Motor.h"
 
-#define INITIALIZE_PWM 255
-#define NORMAL_PWM 200
-#define NO_MOVE_THRESHOLD 5
-#define INITIALIZE_MAX_DURATION_MS 10000
+#define PWM 255
+#define NO_MOVE_THRESHOLD 10
+#define INITIALIZE_MAX_DURATION_MS 100000
 #define STOP_MAX_DURATION_MS 500
 
 class Arm {
@@ -16,16 +15,15 @@ public:
     }
 
     void initialize() {
-        Serial.println("START");
-        _motor->moveUntilStall(+INITIALIZE_PWM, NO_MOVE_THRESHOLD, INITIALIZE_MAX_DURATION_MS);
+        _motor->moveUntilStall(PWM, NO_MOVE_THRESHOLD, INITIALIZE_MAX_DURATION_MS);
     }
 
     void turnPositiveDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motor->moveUntilStall(NORMAL_PWM, NO_MOVE_THRESHOLD, durationMs, stopCondition);
+        _motor->moveUntilStall(PWM, NO_MOVE_THRESHOLD, durationMs, stopCondition);
     }
 
     void turnNegativeDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
-        _motor->moveUntilStall(-NORMAL_PWM, NO_MOVE_THRESHOLD, durationMs, stopCondition);
+        _motor->moveUntilStall(-PWM, NO_MOVE_THRESHOLD, durationMs, stopCondition);
     }
 
     void stop() {

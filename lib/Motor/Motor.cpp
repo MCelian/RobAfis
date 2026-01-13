@@ -47,7 +47,8 @@ long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned lo
         if (millis() - lastCheckTime > sampleTime) {
             long currentPulsePosition = _encoder.getPulsePos();
             long currentPulsesPerSampleTime = abs(currentPulsePosition - lastPulsePosition);
-            
+            Serial.print("Pulses in last ");
+            Serial.println(currentPulsesPerSampleTime);
             if (currentPulsesPerSampleTime < minPulsesPerSampleTime) {
                 Serial.println("STALL DETECTED! (Pulses stopped changing)");
                 _encoder.setMotorPwm(0);

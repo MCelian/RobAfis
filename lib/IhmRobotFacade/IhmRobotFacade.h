@@ -11,10 +11,6 @@ public:
     void executeIhmCommand(int command);
     
     void sendRobotDataToIhm();
-    
-    void test() {
-        _robot->advanceForwardUntilObstacle();
-    }
 private:
     Ihm* _ihm = nullptr;
     Robot* _robot = nullptr;

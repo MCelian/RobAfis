@@ -8,15 +8,20 @@ public:
     Ihm(HardwareSerial* serial);
     void initialize();
 
+    void reconnectIfNeeded() {
+        if (_serial->available()) return;
+        initialize();
+    }
+
     char readCommand();
 
     void setBallIsInClaw() {
-        println(BALLISNOTINCLAW);
+        println(BALLISINCLAW);
         _isBallInClaw = true;
     }
 
     void setBallIsNotInClaw() {
-        println(BALLISINCLAW);
+        println(BALLISNOTINCLAW);
         _isBallInClaw = false;
     }
 

@@ -23,7 +23,8 @@ public:
     }
 
     void initialize() {
-        _sensor->TurnOnmodule(); _sensor->SensorInit();
+        _sensor->TurnOnmodule();
+        _sensor->SensorInit();
     }
 
     int getColor() {

@@ -27,18 +27,15 @@ void Chassis::initialize() {
     _steerRightLimit = range;
     _steerLeftLimit = -range;
 
-    advanceForwardDuringMs(ADVANCE_CALIBRATION_DURATION);
     _isInitialized = true;
 }
 
 void Chassis::pivotLookLeft() {
     // To point NOSE Left, we must steer RIGHT and reverse
     steerToLeftLimit();
-    advanceBackwardDuringMs(600);
 }
 
 void Chassis::pivotLookRight() {
     // To point NOSE Right, we must steer LEFT and reverse
-    steerToLeftLimit();
-    advanceBackwardDuringMs(600);
+    steerToRightLimit();
 }

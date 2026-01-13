@@ -16,9 +16,9 @@ public:
     void addChassis();
     void addArm();
     void addClaw();
-    void addUltrasonicSensor(int port);
-    void addLineFollowerSensor(int port);
-    void addColorSensor(int port);
+    void addUltrasonicSensor();
+    void addLineFollowerSensor();
+    void addColorSensor();
 private:
     Robot* _robot;
 };

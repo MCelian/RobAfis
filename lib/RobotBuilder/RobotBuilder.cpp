@@ -4,9 +4,9 @@ void isrMotorAdvance();
 void isrMotorSteering();
 void isrMotorArm();
 
-Motor objMotorAdvance(1, isrMotorAdvance, 56 / 8, 40.0, 1.5, 12.0);
-Motor objMotorSteering(2, isrMotorSteering, 72 / 8, 18.0, 0.0, 9.0) ;
-Motor objMotorArm(3, isrMotorArm, 56 / 8, 40.0, 1.5, 12.0);
+Motor objMotorAdvance(4, isrMotorAdvance, 56 / 8, 18.0, 0.0, 9.0);
+Motor objMotorSteering(2, isrMotorSteering, 72 / 8, 18.0, 0.0, 9.0);
+Motor objMotorArm(3, isrMotorArm, 56 / 8, 18.0, 1.5, 9.0);
 
 void isrMotorAdvance() { objMotorAdvance.handleInterrupt(); }
 void isrMotorSteering() { objMotorSteering.handleInterrupt(); }
@@ -46,17 +46,17 @@ void RobotBuilder::addArm() {
 }
 
 void RobotBuilder::addClaw() {
-    _robot->setClaw(new Claw(12));
+    _robot->setClaw(new Claw(1));
 }
 
-void RobotBuilder::addUltrasonicSensor(int port) {
-    _robot->setUltrasonicSensor(new UltrasonicSensor(port));
+void RobotBuilder::addUltrasonicSensor() {
+    _robot->setUltrasonicSensor(new UltrasonicSensor(8));
 }
 
-void RobotBuilder::addLineFollowerSensor(int port) {
-    _robot->setLineFollowerSensor(new LineFollowerSensor(port));
+void RobotBuilder::addLineFollowerSensor() {
+    _robot->setLineFollowerSensor(new LineFollowerSensor(7));
 }
 
-void RobotBuilder::addColorSensor(int port) {
-    _robot->setColorSensor(new ColorSensor(port));
+void RobotBuilder::addColorSensor() {
+    _robot->setColorSensor(new ColorSensor(6));
 }

@@ -15,7 +15,6 @@ void initializeComponent(RobotComponent* robotComponent) {
 
 class Robot {
 public:
-    Robot();
     ~Robot();
     void setChassis(Chassis* chassis) {
         delete _chassis;
@@ -38,51 +37,111 @@ public:
         }
 
         _ultrasonicSensor = sensor;
-        _staticSensor = sensor;
+        _staticUltrasoundSensor = sensor;
     }
 
     void setLineFollowerSensor(LineFollowerSensor* sensor) {
-        delete _lineFollowerSensor;
+        if (_lineFollowerSensor != nullptr) {
+            delete _lineFollowerSensor;
+        }
+
         _lineFollowerSensor = sensor;
+        _staticLineFollowerSensor = sensor;
     }
 
     void setColorSensor(ColorSensor* sensor) {
         delete _colorSensor;
         _colorSensor = sensor;
     }
-    
-    void initialize() {
-        initializeComponent(_ultrasonicSensor);
-        //initializeComponent(_claw);
-        initializeComponent(_arm);
-        //initializeComponent(_chassis);
-    }
 
-    void advanceForwardUntilObstacle();
-    void openClawDuringM(int durationMs);
+    void initialize();
+
+    // Claw methods
+    void openClawDuringMs(int durationMs);
     void closeClawDuringMs(int durationMs);
 
+    // Arm methods
     void moveArmToGrabPosition();
     void moveArmToNeutralPosition();
 
-    void advanceFowardUntilPointZone();
+    // Chassis methods
+    void advanceForwardDuringMs(int duration);
+    void advanceBackwardDuringMs(int duration);
+    void advanceForwardUntilObstacle();
+    void advanceForwardUntilLine();
+    void steerCenter();
+    void pivotLookLeft();
+    void pivotLookRight();
 
+    // Concrete actions
     void stopAllComponents();
+    bool advanceForwardUntilPointZone();
+    void searchAndGrabBall();
+    void goTo22Zone();
 
-    String getSensorDataToString();
+    String getCurrentColorName() {
+        return _colorSensor->getCurrentColorName();
+    }
+
+    int getUltrasonicDistance() {
+        return _ultrasonicSensor->getDistance();
+    }
+
+    bool isLineDetectedLeft() {
+        return _lineFollowerSensor->isLineDetectedLeft();
+    }
+
+    bool isLineDetectedRight() {
+        return _lineFollowerSensor->isLineDetectedRight();
+    }
+
+    void setBallIsInClaw() {
+        _isBallInClaw = true;
+    }
+
+    void setBallIsInNotClaw() {
+        _isBallInClaw = false;
+    }
+    
+    bool isBallInClaw() {
+        return _isBallInClaw;
+    }
+
+    void addFivePointsToScore() {
+        _score += 5;
+    }
+
+    String getCurrentZone() {
+        String currentColorName = _colorSensor->getCurrentColorName();
+        String zoneName = "ERROR";
+        if (currentColorName == "BLEU") zoneName = "Engagement";
+        if (currentColorName == "BLANC") zoneName = "Centrale ou zone 22";
+        if (currentColorName == "VERT") zoneName = "En but";
+        _currentZone = zoneName;
+        return zoneName;
+    }
+
+    int getCurrentZoneRow() {
+        return _currentZoneRow;
+    };
 private:
     Chassis* _chassis = nullptr;
     Arm* _arm = nullptr;
     Claw* _claw = nullptr;
     UltrasonicSensor* _ultrasonicSensor = nullptr;
-    static UltrasonicSensor* _staticSensor;
+    static UltrasonicSensor* _staticUltrasoundSensor;
     static bool checkObstacle();
     LineFollowerSensor* _lineFollowerSensor = nullptr;
+    static LineFollowerSensor* _staticLineFollowerSensor;
+    static bool checkLineDetection();
+
     ColorSensor* _colorSensor = nullptr;
 
-    void pivotLookLeft();
-    void pivotLookRight();
-    void realignCenter();
+    bool _isBallInClaw = false;
+    int _score = 0;
+    String _currentZone = "ERROR";
+    int _currentZoneRow = 3;
+    bool _isAlignedWithZones = true;
 };
 
 #endif
