@@ -34,7 +34,7 @@ public:
     void println(const String& msg);
 private:
     HardwareSerial* _serial;
-    char _last_command_received;
+    char _lastExecutedCommand;
     bool _isBallInClaw = false;
     int _score = 0;
     
@@ -42,6 +42,7 @@ private:
     const char* TRYSUCCESFUL = "POINT5 5";
     const char* BALLISINCLAW = "Ballon 0";
     const char* BALLISNOTINCLAW = "Ballon 1";
+    const char* END = "FIN";
 };
 
 #endif

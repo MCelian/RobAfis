@@ -3,9 +3,9 @@
 
 #include "Motor.h"
 
-#define PWM 255
-#define NO_MOVE_THRESHOLD 10
-#define INITIALIZE_MAX_DURATION_MS 100000
+#define PWM 200
+#define NO_MOVE_THRESHOLD 38
+#define INITIALIZE_MAX_DURATION_MS 10000
 #define STOP_MAX_DURATION_MS 500
 
 class Arm {
@@ -16,6 +16,10 @@ public:
 
     void initialize() {
         _motor->moveUntilStall(PWM, NO_MOVE_THRESHOLD, INITIALIZE_MAX_DURATION_MS);
+        Serial.println("ZERO FOUND");
+        _motor->moveUntilStall(PWM, -1, 2000);
+        _motor->setCurrentPositionAsZero();
+        _motor->moveUntilStall(-PWM, -1, 3000);
     }
 
     void turnPositiveDuringMs(int durationMs, bool (*stopCondition)() = nullptr) {
@@ -30,7 +34,14 @@ public:
         _motor->moveUntilStall(0, 0, STOP_MAX_DURATION_MS);
     }
 
-    void moveToGrabPosition() {}
+    void moveToGrabPosition() {
+        _motor->moveToPosition(0, PWM);
+    }
+
+    void moveArmToNeutralPosition() {
+        _motor->moveToPosition(0, PWM);
+        _motor->moveUntilStall(-PWM, -1, 3000);
+    }
 private:
     Motor* _motor;
     int _steerNegativeLimit;

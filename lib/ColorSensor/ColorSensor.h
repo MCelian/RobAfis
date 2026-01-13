@@ -49,11 +49,28 @@ public:
     }
     
     String getCurrentColorName() {
-        getColor();
-        return getColorName(getColor());
+        String colorName = getColorName(getColor());
+        return colorName;
+    }
+
+    int getColorCode() {
+        _sensor->ColorDataRead();
+        Serial.print("Color Code: ");
+        Serial.println(_sensor->ReturnColorCode());
+        return _sensor->ReturnColorCode();
+    }
+
+    bool isColorCode(int code) {
+        return code == getColorCode();
     }
 private:
     MeColorSensor* _sensor;
 };
 
 #endif
+
+// code noir 2371373
+// code gris 3752507
+// code blue 3499124
+// code vert 4022060
+// white 7309954

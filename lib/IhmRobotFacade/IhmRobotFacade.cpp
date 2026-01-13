@@ -10,7 +10,9 @@
 #define SCENARIO_TRY_ID '7'
 #define SCENARIO_CONVERSION_ID '8'
 
-void IhmRobotFacade::executeIhmCommand(int command) {
+void IhmRobotFacade::executeIhmCommand(char command) {
+    // Serial.print("command: ");
+    // Serial.println(command);
     switch (command) {
         case START_COMMAND_ID:
             _ihm->println("Executing: Start");
@@ -42,16 +44,27 @@ void IhmRobotFacade::executeIhmCommand(int command) {
         case SCENARIO_AUTO_TEST_ID:
             _ihm->println("Executing: Auto Test Scenario");
 
-            _robot->searchAndGrabBall();
-            _ihm->setBallIsInClaw();
-            _robot->setBallIsInClaw();
+            if (!_robot->isBallInClaw()) {
+                Serial.println("advanceForwardUntilObstacle");
+                _robot->advanceForwardUntilObstacle();
+
+                _robot->openClawUntilLimit();
+                _robot->moveArmToGrabPosition();
+                _robot->closeClawUntilLimit();
+                _ihm->setBallIsInClaw();
+                _robot->setBallIsInClaw();
+            }
 
             _robot->moveArmToNeutralPosition();
-            _robot->advanceForwardUntilLine();
 
-            if (_robot->advanceForwardUntilPointZone()) {
-                _ihm->addFivePointsToScore();
-            }
+            // Serial.println("advanceForwardUntilPointZone");
+            // bool arrivedAtPointZone = _robot->advanceForwardUntilPointZone();
+            // if (arrivedAtPointZone) {
+            //     _ihm->addFivePointsToScore();
+            // }
+
+            Serial.println("FIN");
+            _ihm->println("FIN");
         break;
 
         case SCENARIO_TRY_ID:
@@ -78,9 +91,9 @@ void IhmRobotFacade::executeIhmCommand(int command) {
         break;
 
         default:
+            Serial.println("RIEN FAIRE");
+            return;
         break;
-        
-        sendRobotDataToIhm();
     }
 }
 

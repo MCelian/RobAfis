@@ -17,11 +17,11 @@ public:
     Chassis(Motor* motorAdvance, Motor* motorSteering);
     void initialize();
     void steerToLeftLimit() {
-        _motorSteering->moveToPosition(_steerLeftLimit + 40, 0);
+        _motorSteering->moveToPosition(_steerLeftLimit, 0);
     }
 
     void steerToRightLimit() {
-        _motorSteering->moveToPosition(_steerRightLimit - 40, 0);
+        _motorSteering->moveToPosition(_steerRightLimit, 0);
     }
 
     void steerToCenter() {

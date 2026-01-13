@@ -1,7 +1,7 @@
 #include "Ihm.h"
 #include "Arduino.h"
 
-Ihm::Ihm(HardwareSerial* s) : _serial(s), _last_command_received('\0') {}
+Ihm::Ihm(HardwareSerial* s) : _serial(s), _lastExecutedCommand('\0') {}
 
 void Ihm::initialize() {
     long baudrate = 115200;
@@ -20,14 +20,13 @@ void Ihm::println(const String& msg) {
 }
 
 char Ihm::readCommand() {
+    char command = '\0';
     if (_serial->available() > 0) {
-        _last_command_received = (char)_serial->read();
-        return _last_command_received;
+        char readCommand = (char)_serial->read();
+        command = readCommand == _lastExecutedCommand ? '\0' : readCommand;
     }
-    else {
-        return _last_command_received;
-    }
-    return '\0';
+    return command;
+    delay(100);
 }
 
 // String Ihm::writeCommand(const String& command) {

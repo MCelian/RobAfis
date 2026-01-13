@@ -66,6 +66,59 @@ long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned lo
     return _encoder.getCurPos();
 }
 
+/*
+
+long Motor::moveUntilStall(int pwmPower, int minPulsesPerSampleTime, unsigned long timeoutMs, bool (*stopCondition)()) {
+    _encoder.setTarPWM(pwmPower);
+
+    long startTime = millis();
+    long lastCheckTime = millis();
+    long lastPulsePosition = _encoder.getPulsePos();
+
+    _encoder.setMotorPwm(pwmPower);
+
+    // Motor Startup Delay
+    while(millis() - startTime < 500) {
+        _encoder.loop();
+    }
+
+    // Motor Concrete Movement
+    while(millis() - startTime < timeoutMs) {
+        _encoder.loop();
+
+        // --- NEW: External Stop Check ---
+        if (stopCondition != nullptr && stopCondition()) {
+            Serial.println("External Stop Condition Met!");
+            _encoder.setMotorPwm(0);
+            _encoder.setTarPWM(0);
+            return _encoder.getCurPos();
+        }
+
+        int sampleTime = 100;
+        if (millis() - lastCheckTime > sampleTime) {
+            long currentPulsePosition = _encoder.getPulsePos();
+            long currentPulsesPerSampleTime = abs(currentPulsePosition - lastPulsePosition);
+            Serial.print("Pulses in last ");
+            Serial.println(currentPulsesPerSampleTime);
+            Serial.print("Delta: ");
+            Serial.println(currentPulsesPerSampleTime - minPulsesPerSampleTime);
+            if (currentPulsesPerSampleTime - minPulsesPerSampleTime < 7) {
+                Serial.println("STALL DETECTED! (Pulses stopped changing)");
+                _encoder.setMotorPwm(0);
+                _encoder.setTarPWM(0);
+                return _encoder.getCurPos();
+            }
+            lastPulsePosition = currentPulsePosition;
+            lastCheckTime = millis();
+        }
+    }
+
+    Serial.println("Timeout Reached");
+    _encoder.setMotorPwm(0);
+    _encoder.setTarPWM(0);
+    return _encoder.getCurPos();
+}
+*/
 void Motor::moveToPosition(long targetPosition, int speed = 100) {
     _encoder.moveTo(targetPosition, speed);
 

@@ -50,8 +50,12 @@ public:
     }
 
     void setColorSensor(ColorSensor* sensor) {
-        delete _colorSensor;
+        if (_colorSensor != nullptr) {
+            delete _colorSensor;
+        }
+
         _colorSensor = sensor;
+        _staticColorSensor = sensor;
     }
 
     void initialize();
@@ -59,9 +63,12 @@ public:
     // Claw methods
     void openClawDuringMs(int durationMs);
     void closeClawDuringMs(int durationMs);
+    void openClawUntilLimit();
+    void closeClawUntilLimit();
 
     // Arm methods
     void moveArmToGrabPosition();
+
     void moveArmToNeutralPosition();
 
     // Chassis methods
@@ -124,6 +131,10 @@ public:
     int getCurrentZoneRow() {
         return _currentZoneRow;
     };
+
+    void test() {
+        _colorSensor->getColorCode();
+    }
 private:
     Chassis* _chassis = nullptr;
     Arm* _arm = nullptr;
@@ -136,6 +147,8 @@ private:
     static bool checkLineDetection();
 
     ColorSensor* _colorSensor = nullptr;
+    static ColorSensor* _staticColorSensor;
+    static bool checkColorCode(int position);
 
     bool _isBallInClaw = false;
     int _score = 0;

@@ -2,6 +2,7 @@
 
 UltrasonicSensor* Robot::_staticUltrasoundSensor = nullptr;
 LineFollowerSensor* Robot::_staticLineFollowerSensor = nullptr;
+ColorSensor* Robot::_staticColorSensor = nullptr;
 
 bool Robot::checkObstacle() {
     if (_staticUltrasoundSensor != nullptr) {
@@ -17,6 +18,22 @@ bool Robot::checkLineDetection() {
     return false;
 }
 
+bool Robot::checkColorCode(int code) {
+    if (_staticColorSensor != nullptr) {
+        int currentCode = _staticColorSensor->getColorCode();
+        int delta = abs(currentCode - code);
+        Serial.print("current Code: ");
+        Serial.println(currentCode);
+        Serial.print("Wanted Code: ");
+        Serial.println(code);
+        Serial.print("Delta: ");
+        Serial.println(delta);
+        return delta < 500;
+    }
+    return false;
+}
+
+
 Robot::~Robot() {
     delete _chassis;
     delete _arm;
@@ -30,8 +47,8 @@ void Robot::initialize() {
     initializeComponent(_ultrasonicSensor);
     initializeComponent(_lineFollowerSensor);
     initializeComponent(_colorSensor);
-    initializeComponent(_claw);
-    initializeComponent(_arm);
+    //initializeComponent(_arm);
+    // initializeComponent(_claw);
     initializeComponent(_chassis);
 }
 
@@ -44,13 +61,21 @@ void Robot::openClawDuringMs(int durationMs) {
     _claw->openDuringMs(durationMs);
 }
 
+void Robot::openClawUntilLimit() {
+    _claw->openUntilLimit();
+}
+
+void Robot::closeClawUntilLimit() {
+    _claw->closeUntilLimit();
+}
+
 // Arm methods
 void Robot::moveArmToGrabPosition() {
     _arm->moveToGrabPosition();
 }
 
 void Robot::moveArmToNeutralPosition() {
-    // TODO
+    _arm->moveArmToNeutralPosition();
 }
 
 // Chassis methods
@@ -94,23 +119,22 @@ bool Robot::advanceForwardUntilPointZone() {
     unsigned long startTime = millis();
     int timeoutMs = 10000;
     const int stepMs = 100;
-    while (_colorSensor->getColor() != _colorSensor->GREEN && (millis() - startTime) < (unsigned long)timeoutMs) {
-        Serial.println(_colorSensor->getColor());
-        _chassis->advanceForwardDuringMs(stepMs);
-    }
-    if (getCurrentZone() == "En but") {
-        _arm->moveToGrabPosition();
+    
+    int greenCode = 23595;
+
+    // while (!checkColorCode(greenCode) && (millis() - startTime) < (unsigned long)timeoutMs) {
+    while (!checkColorCode(greenCode)) {
+        Serial.println("START");
+        Serial.println(_colorSensor->getColorCode());
+        // _chassis->advanceForwardDuringMs(stepMs);
         return true;
     }
+    Serial.println("YESSSSSSSSSSSS");
     return false;
 }
 
 void Robot::searchAndGrabBall() {
-    if (!_isBallInClaw) return;
-    advanceForwardUntilObstacle();
-    openClawDuringMs(3000);
-    moveArmToGrabPosition();
-    closeClawDuringMs(6000);
+
 }
 
 void Robot::goTo22Zone() {

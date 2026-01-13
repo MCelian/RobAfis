@@ -22,7 +22,7 @@ void setup() {
 }
 
 void loop() {
-  ihm->reconnectIfNeeded();
   char command = ihm->readCommand();
+  // ihmRobotFacade->test();
   ihmRobotFacade->executeIhmCommand(command);
 }
